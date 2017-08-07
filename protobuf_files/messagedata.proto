@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package protobuf.MessageData;
+
+option java_package="protobuf";
+option java_outer_classname = "ClientMessageData";
+
+message MessageData {
+    string dataStr = 1;
+    int32  dataNum = 2;
+    
+}
