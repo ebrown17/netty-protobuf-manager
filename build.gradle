@@ -1,0 +1,22 @@
+import org.apache.tools.ant.filters.*
+
+apply plugin: 'java'
+apply plugin: 'application'
+apply plugin: 'eclipse'
+
+mainClassName = "Main"
+
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+	compile 'com.google.protobuf:protobuf-java:3.3.1'
+	compile group: 'io.netty', name: 'netty-all', version: '4.1.14.Final'	
+}
+
+
+
+
+
