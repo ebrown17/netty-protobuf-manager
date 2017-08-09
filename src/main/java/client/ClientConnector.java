@@ -27,11 +27,11 @@ public class ClientConnector {
 	            // Start the client.
 	            ChannelFuture f = bootstrap.connect(host, port).sync(); // (5)
 	            
-	            ClientDataHandler sendText =  f.channel().pipeline().get(ClientDataHandler.class);
+	            ClientDataHandler sendText =  f.channel().pipeline().get(ClientDataHandler.class);	           
 	            System.out.println("sending data");
-	            int count = 0;
+	            int count = 1;
 	            while(count < 100){
-	            	Thread.sleep(3000);
+	            	Thread.sleep(1000);
 	            	sendText.sendData(count);
 	            	count++;
 	            }

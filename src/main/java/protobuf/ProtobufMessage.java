@@ -3,8 +3,8 @@
 
 package protobuf;
 
-public final class ClientMessageData {
-  private ClientMessageData() {}
+public final class ProtobufMessage {
+  private ProtobufMessage() {}
   public static void registerAllExtensions(
       com.google.protobuf.ExtensionRegistryLite registry) {
   }
@@ -14,39 +14,39 @@ public final class ClientMessageData {
     registerAllExtensions(
         (com.google.protobuf.ExtensionRegistryLite) registry);
   }
-  public interface MessageDataOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:protobuf.MessageData.MessageData)
+  public interface ProtobufDataOrBuilder extends
+      // @@protoc_insertion_point(interface_extends:protobuf.MessageData.ProtobufData)
       com.google.protobuf.MessageOrBuilder {
 
     /**
-     * <code>string dataStr = 1;</code>
+     * <code>string dataString = 1;</code>
      */
-    java.lang.String getDataStr();
+    java.lang.String getDataString();
     /**
-     * <code>string dataStr = 1;</code>
+     * <code>string dataString = 1;</code>
      */
     com.google.protobuf.ByteString
-        getDataStrBytes();
+        getDataStringBytes();
 
     /**
-     * <code>int32 dataNum = 2;</code>
+     * <code>int32 dataNumber = 2;</code>
      */
-    int getDataNum();
+    int getDataNumber();
   }
   /**
-   * Protobuf type {@code protobuf.MessageData.MessageData}
+   * Protobuf type {@code protobuf.MessageData.ProtobufData}
    */
-  public  static final class MessageData extends
+  public  static final class ProtobufData extends
       com.google.protobuf.GeneratedMessageV3 implements
-      // @@protoc_insertion_point(message_implements:protobuf.MessageData.MessageData)
-      MessageDataOrBuilder {
-    // Use MessageData.newBuilder() to construct.
-    private MessageData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
+      // @@protoc_insertion_point(message_implements:protobuf.MessageData.ProtobufData)
+      ProtobufDataOrBuilder {
+    // Use ProtobufData.newBuilder() to construct.
+    private ProtobufData(com.google.protobuf.GeneratedMessageV3.Builder<?> builder) {
       super(builder);
     }
-    private MessageData() {
-      dataStr_ = "";
-      dataNum_ = 0;
+    private ProtobufData() {
+      dataString_ = "";
+      dataNumber_ = 0;
     }
 
     @java.lang.Override
@@ -54,7 +54,7 @@ public final class ClientMessageData {
     getUnknownFields() {
       return com.google.protobuf.UnknownFieldSet.getDefaultInstance();
     }
-    private MessageData(
+    private ProtobufData(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
@@ -77,12 +77,12 @@ public final class ClientMessageData {
             case 10: {
               java.lang.String s = input.readStringRequireUtf8();
 
-              dataStr_ = s;
+              dataString_ = s;
               break;
             }
             case 16: {
 
-              dataNum_ = input.readInt32();
+              dataNumber_ = input.readInt32();
               break;
             }
           }
@@ -98,57 +98,57 @@ public final class ClientMessageData {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return protobuf.ClientMessageData.internal_static_protobuf_MessageData_MessageData_descriptor;
+      return protobuf.ProtobufMessage.internal_static_protobuf_MessageData_ProtobufData_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return protobuf.ClientMessageData.internal_static_protobuf_MessageData_MessageData_fieldAccessorTable
+      return protobuf.ProtobufMessage.internal_static_protobuf_MessageData_ProtobufData_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              protobuf.ClientMessageData.MessageData.class, protobuf.ClientMessageData.MessageData.Builder.class);
+              protobuf.ProtobufMessage.ProtobufData.class, protobuf.ProtobufMessage.ProtobufData.Builder.class);
     }
 
-    public static final int DATASTR_FIELD_NUMBER = 1;
-    private volatile java.lang.Object dataStr_;
+    public static final int DATASTRING_FIELD_NUMBER = 1;
+    private volatile java.lang.Object dataString_;
     /**
-     * <code>string dataStr = 1;</code>
+     * <code>string dataString = 1;</code>
      */
-    public java.lang.String getDataStr() {
-      java.lang.Object ref = dataStr_;
+    public java.lang.String getDataString() {
+      java.lang.Object ref = dataString_;
       if (ref instanceof java.lang.String) {
         return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
         java.lang.String s = bs.toStringUtf8();
-        dataStr_ = s;
+        dataString_ = s;
         return s;
       }
     }
     /**
-     * <code>string dataStr = 1;</code>
+     * <code>string dataString = 1;</code>
      */
     public com.google.protobuf.ByteString
-        getDataStrBytes() {
-      java.lang.Object ref = dataStr_;
+        getDataStringBytes() {
+      java.lang.Object ref = dataString_;
       if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
             com.google.protobuf.ByteString.copyFromUtf8(
                 (java.lang.String) ref);
-        dataStr_ = b;
+        dataString_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
 
-    public static final int DATANUM_FIELD_NUMBER = 2;
-    private int dataNum_;
+    public static final int DATANUMBER_FIELD_NUMBER = 2;
+    private int dataNumber_;
     /**
-     * <code>int32 dataNum = 2;</code>
+     * <code>int32 dataNumber = 2;</code>
      */
-    public int getDataNum() {
-      return dataNum_;
+    public int getDataNumber() {
+      return dataNumber_;
     }
 
     private byte memoizedIsInitialized = -1;
@@ -163,11 +163,11 @@ public final class ClientMessageData {
 
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
-      if (!getDataStrBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, dataStr_);
+      if (!getDataStringBytes().isEmpty()) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, dataString_);
       }
-      if (dataNum_ != 0) {
-        output.writeInt32(2, dataNum_);
+      if (dataNumber_ != 0) {
+        output.writeInt32(2, dataNumber_);
       }
     }
 
@@ -176,12 +176,12 @@ public final class ClientMessageData {
       if (size != -1) return size;
 
       size = 0;
-      if (!getDataStrBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, dataStr_);
+      if (!getDataStringBytes().isEmpty()) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, dataString_);
       }
-      if (dataNum_ != 0) {
+      if (dataNumber_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(2, dataNum_);
+          .computeInt32Size(2, dataNumber_);
       }
       memoizedSize = size;
       return size;
@@ -193,16 +193,16 @@ public final class ClientMessageData {
       if (obj == this) {
        return true;
       }
-      if (!(obj instanceof protobuf.ClientMessageData.MessageData)) {
+      if (!(obj instanceof protobuf.ProtobufMessage.ProtobufData)) {
         return super.equals(obj);
       }
-      protobuf.ClientMessageData.MessageData other = (protobuf.ClientMessageData.MessageData) obj;
+      protobuf.ProtobufMessage.ProtobufData other = (protobuf.ProtobufMessage.ProtobufData) obj;
 
       boolean result = true;
-      result = result && getDataStr()
-          .equals(other.getDataStr());
-      result = result && (getDataNum()
-          == other.getDataNum());
+      result = result && getDataString()
+          .equals(other.getDataString());
+      result = result && (getDataNumber()
+          == other.getDataNumber());
       return result;
     }
 
@@ -213,78 +213,78 @@ public final class ClientMessageData {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
-      hash = (37 * hash) + DATASTR_FIELD_NUMBER;
-      hash = (53 * hash) + getDataStr().hashCode();
-      hash = (37 * hash) + DATANUM_FIELD_NUMBER;
-      hash = (53 * hash) + getDataNum();
+      hash = (37 * hash) + DATASTRING_FIELD_NUMBER;
+      hash = (53 * hash) + getDataString().hashCode();
+      hash = (37 * hash) + DATANUMBER_FIELD_NUMBER;
+      hash = (53 * hash) + getDataNumber();
       hash = (29 * hash) + unknownFields.hashCode();
       memoizedHashCode = hash;
       return hash;
     }
 
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         java.nio.ByteBuffer data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         java.nio.ByteBuffer data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(byte[] data)
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(java.io.InputStream input)
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input, extensionRegistry);
     }
-    public static protobuf.ClientMessageData.MessageData parseDelimitedFrom(java.io.InputStream input)
+    public static protobuf.ProtobufMessage.ProtobufData parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input);
     }
-    public static protobuf.ClientMessageData.MessageData parseDelimitedFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseDelimitedWithIOException(PARSER, input, extensionRegistry);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return com.google.protobuf.GeneratedMessageV3
           .parseWithIOException(PARSER, input);
     }
-    public static protobuf.ClientMessageData.MessageData parseFrom(
+    public static protobuf.ProtobufMessage.ProtobufData parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -296,7 +296,7 @@ public final class ClientMessageData {
     public static Builder newBuilder() {
       return DEFAULT_INSTANCE.toBuilder();
     }
-    public static Builder newBuilder(protobuf.ClientMessageData.MessageData prototype) {
+    public static Builder newBuilder(protobuf.ProtobufMessage.ProtobufData prototype) {
       return DEFAULT_INSTANCE.toBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() {
@@ -311,25 +311,25 @@ public final class ClientMessageData {
       return builder;
     }
     /**
-     * Protobuf type {@code protobuf.MessageData.MessageData}
+     * Protobuf type {@code protobuf.MessageData.ProtobufData}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessageV3.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:protobuf.MessageData.MessageData)
-        protobuf.ClientMessageData.MessageDataOrBuilder {
+        // @@protoc_insertion_point(builder_implements:protobuf.MessageData.ProtobufData)
+        protobuf.ProtobufMessage.ProtobufDataOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return protobuf.ClientMessageData.internal_static_protobuf_MessageData_MessageData_descriptor;
+        return protobuf.ProtobufMessage.internal_static_protobuf_MessageData_ProtobufData_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return protobuf.ClientMessageData.internal_static_protobuf_MessageData_MessageData_fieldAccessorTable
+        return protobuf.ProtobufMessage.internal_static_protobuf_MessageData_ProtobufData_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                protobuf.ClientMessageData.MessageData.class, protobuf.ClientMessageData.MessageData.Builder.class);
+                protobuf.ProtobufMessage.ProtobufData.class, protobuf.ProtobufMessage.ProtobufData.Builder.class);
       }
 
-      // Construct using protobuf.ClientMessageData.MessageData.newBuilder()
+      // Construct using protobuf.ProtobufMessage.ProtobufData.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -346,34 +346,34 @@ public final class ClientMessageData {
       }
       public Builder clear() {
         super.clear();
-        dataStr_ = "";
+        dataString_ = "";
 
-        dataNum_ = 0;
+        dataNumber_ = 0;
 
         return this;
       }
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return protobuf.ClientMessageData.internal_static_protobuf_MessageData_MessageData_descriptor;
+        return protobuf.ProtobufMessage.internal_static_protobuf_MessageData_ProtobufData_descriptor;
       }
 
-      public protobuf.ClientMessageData.MessageData getDefaultInstanceForType() {
-        return protobuf.ClientMessageData.MessageData.getDefaultInstance();
+      public protobuf.ProtobufMessage.ProtobufData getDefaultInstanceForType() {
+        return protobuf.ProtobufMessage.ProtobufData.getDefaultInstance();
       }
 
-      public protobuf.ClientMessageData.MessageData build() {
-        protobuf.ClientMessageData.MessageData result = buildPartial();
+      public protobuf.ProtobufMessage.ProtobufData build() {
+        protobuf.ProtobufMessage.ProtobufData result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public protobuf.ClientMessageData.MessageData buildPartial() {
-        protobuf.ClientMessageData.MessageData result = new protobuf.ClientMessageData.MessageData(this);
-        result.dataStr_ = dataStr_;
-        result.dataNum_ = dataNum_;
+      public protobuf.ProtobufMessage.ProtobufData buildPartial() {
+        protobuf.ProtobufMessage.ProtobufData result = new protobuf.ProtobufMessage.ProtobufData(this);
+        result.dataString_ = dataString_;
+        result.dataNumber_ = dataNumber_;
         onBuilt();
         return result;
       }
@@ -405,22 +405,22 @@ public final class ClientMessageData {
         return (Builder) super.addRepeatedField(field, value);
       }
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof protobuf.ClientMessageData.MessageData) {
-          return mergeFrom((protobuf.ClientMessageData.MessageData)other);
+        if (other instanceof protobuf.ProtobufMessage.ProtobufData) {
+          return mergeFrom((protobuf.ProtobufMessage.ProtobufData)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(protobuf.ClientMessageData.MessageData other) {
-        if (other == protobuf.ClientMessageData.MessageData.getDefaultInstance()) return this;
-        if (!other.getDataStr().isEmpty()) {
-          dataStr_ = other.dataStr_;
+      public Builder mergeFrom(protobuf.ProtobufMessage.ProtobufData other) {
+        if (other == protobuf.ProtobufMessage.ProtobufData.getDefaultInstance()) return this;
+        if (!other.getDataString().isEmpty()) {
+          dataString_ = other.dataString_;
           onChanged();
         }
-        if (other.getDataNum() != 0) {
-          setDataNum(other.getDataNum());
+        if (other.getDataNumber() != 0) {
+          setDataNumber(other.getDataNumber());
         }
         onChanged();
         return this;
@@ -434,11 +434,11 @@ public final class ClientMessageData {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        protobuf.ClientMessageData.MessageData parsedMessage = null;
+        protobuf.ProtobufMessage.ProtobufData parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (protobuf.ClientMessageData.MessageData) e.getUnfinishedMessage();
+          parsedMessage = (protobuf.ProtobufMessage.ProtobufData) e.getUnfinishedMessage();
           throw e.unwrapIOException();
         } finally {
           if (parsedMessage != null) {
@@ -448,97 +448,97 @@ public final class ClientMessageData {
         return this;
       }
 
-      private java.lang.Object dataStr_ = "";
+      private java.lang.Object dataString_ = "";
       /**
-       * <code>string dataStr = 1;</code>
+       * <code>string dataString = 1;</code>
        */
-      public java.lang.String getDataStr() {
-        java.lang.Object ref = dataStr_;
+      public java.lang.String getDataString() {
+        java.lang.Object ref = dataString_;
         if (!(ref instanceof java.lang.String)) {
           com.google.protobuf.ByteString bs =
               (com.google.protobuf.ByteString) ref;
           java.lang.String s = bs.toStringUtf8();
-          dataStr_ = s;
+          dataString_ = s;
           return s;
         } else {
           return (java.lang.String) ref;
         }
       }
       /**
-       * <code>string dataStr = 1;</code>
+       * <code>string dataString = 1;</code>
        */
       public com.google.protobuf.ByteString
-          getDataStrBytes() {
-        java.lang.Object ref = dataStr_;
+          getDataStringBytes() {
+        java.lang.Object ref = dataString_;
         if (ref instanceof String) {
           com.google.protobuf.ByteString b = 
               com.google.protobuf.ByteString.copyFromUtf8(
                   (java.lang.String) ref);
-          dataStr_ = b;
+          dataString_ = b;
           return b;
         } else {
           return (com.google.protobuf.ByteString) ref;
         }
       }
       /**
-       * <code>string dataStr = 1;</code>
+       * <code>string dataString = 1;</code>
        */
-      public Builder setDataStr(
+      public Builder setDataString(
           java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
   
-        dataStr_ = value;
+        dataString_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string dataStr = 1;</code>
+       * <code>string dataString = 1;</code>
        */
-      public Builder clearDataStr() {
+      public Builder clearDataString() {
         
-        dataStr_ = getDefaultInstance().getDataStr();
+        dataString_ = getDefaultInstance().getDataString();
         onChanged();
         return this;
       }
       /**
-       * <code>string dataStr = 1;</code>
+       * <code>string dataString = 1;</code>
        */
-      public Builder setDataStrBytes(
+      public Builder setDataStringBytes(
           com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
   }
   checkByteStringIsUtf8(value);
         
-        dataStr_ = value;
+        dataString_ = value;
         onChanged();
         return this;
       }
 
-      private int dataNum_ ;
+      private int dataNumber_ ;
       /**
-       * <code>int32 dataNum = 2;</code>
+       * <code>int32 dataNumber = 2;</code>
        */
-      public int getDataNum() {
-        return dataNum_;
+      public int getDataNumber() {
+        return dataNumber_;
       }
       /**
-       * <code>int32 dataNum = 2;</code>
+       * <code>int32 dataNumber = 2;</code>
        */
-      public Builder setDataNum(int value) {
+      public Builder setDataNumber(int value) {
         
-        dataNum_ = value;
+        dataNumber_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>int32 dataNum = 2;</code>
+       * <code>int32 dataNumber = 2;</code>
        */
-      public Builder clearDataNum() {
+      public Builder clearDataNumber() {
         
-        dataNum_ = 0;
+        dataNumber_ = 0;
         onChanged();
         return this;
       }
@@ -553,49 +553,49 @@ public final class ClientMessageData {
       }
 
 
-      // @@protoc_insertion_point(builder_scope:protobuf.MessageData.MessageData)
+      // @@protoc_insertion_point(builder_scope:protobuf.MessageData.ProtobufData)
     }
 
-    // @@protoc_insertion_point(class_scope:protobuf.MessageData.MessageData)
-    private static final protobuf.ClientMessageData.MessageData DEFAULT_INSTANCE;
+    // @@protoc_insertion_point(class_scope:protobuf.MessageData.ProtobufData)
+    private static final protobuf.ProtobufMessage.ProtobufData DEFAULT_INSTANCE;
     static {
-      DEFAULT_INSTANCE = new protobuf.ClientMessageData.MessageData();
+      DEFAULT_INSTANCE = new protobuf.ProtobufMessage.ProtobufData();
     }
 
-    public static protobuf.ClientMessageData.MessageData getDefaultInstance() {
+    public static protobuf.ProtobufMessage.ProtobufData getDefaultInstance() {
       return DEFAULT_INSTANCE;
     }
 
-    private static final com.google.protobuf.Parser<MessageData>
-        PARSER = new com.google.protobuf.AbstractParser<MessageData>() {
-      public MessageData parsePartialFrom(
+    private static final com.google.protobuf.Parser<ProtobufData>
+        PARSER = new com.google.protobuf.AbstractParser<ProtobufData>() {
+      public ProtobufData parsePartialFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws com.google.protobuf.InvalidProtocolBufferException {
-          return new MessageData(input, extensionRegistry);
+          return new ProtobufData(input, extensionRegistry);
       }
     };
 
-    public static com.google.protobuf.Parser<MessageData> parser() {
+    public static com.google.protobuf.Parser<ProtobufData> parser() {
       return PARSER;
     }
 
     @java.lang.Override
-    public com.google.protobuf.Parser<MessageData> getParserForType() {
+    public com.google.protobuf.Parser<ProtobufData> getParserForType() {
       return PARSER;
     }
 
-    public protobuf.ClientMessageData.MessageData getDefaultInstanceForType() {
+    public protobuf.ProtobufMessage.ProtobufData getDefaultInstanceForType() {
       return DEFAULT_INSTANCE;
     }
 
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_protobuf_MessageData_MessageData_descriptor;
+    internal_static_protobuf_MessageData_ProtobufData_descriptor;
   private static final 
     com.google.protobuf.GeneratedMessageV3.FieldAccessorTable
-      internal_static_protobuf_MessageData_MessageData_fieldAccessorTable;
+      internal_static_protobuf_MessageData_ProtobufData_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -606,9 +606,9 @@ public final class ClientMessageData {
   static {
     java.lang.String[] descriptorData = {
       "\n\021messagedata.proto\022\024protobuf.MessageDat" +
-      "a\"/\n\013MessageData\022\017\n\007dataStr\030\001 \001(\t\022\017\n\007dat" +
-      "aNum\030\002 \001(\005B\035\n\010protobufB\021ClientMessageDat" +
-      "ab\006proto3"
+      "a\"6\n\014ProtobufData\022\022\n\ndataString\030\001 \001(\t\022\022\n" +
+      "\ndataNumber\030\002 \001(\005B\033\n\010protobufB\017ProtobufM" +
+      "essageb\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -622,12 +622,12 @@ public final class ClientMessageData {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_protobuf_MessageData_MessageData_descriptor =
+    internal_static_protobuf_MessageData_ProtobufData_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_protobuf_MessageData_MessageData_fieldAccessorTable = new
+    internal_static_protobuf_MessageData_ProtobufData_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
-        internal_static_protobuf_MessageData_MessageData_descriptor,
-        new java.lang.String[] { "DataStr", "DataNum", });
+        internal_static_protobuf_MessageData_ProtobufData_descriptor,
+        new java.lang.String[] { "DataString", "DataNumber", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)
