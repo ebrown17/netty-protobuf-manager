@@ -15,6 +15,14 @@ dependencies {
 }
 
 
+task asServer(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "Main"
+  
+}
 
-
-
+task asClient(type: JavaExec) {
+  classpath sourceSets.main.runtimeClasspath
+  main = "client.ClientConnector"
+  
+}
