@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import server.ServerListener;
 
 public class ClientConnector {
 
@@ -20,12 +21,12 @@ public class ClientConnector {
 		 EventLoopGroup workerGroup = new NioEventLoopGroup();
 		 try {
 			 Bootstrap bootstrap = new Bootstrap();
-	         	bootstrap.group(workerGroup)
+	         bootstrap.group(workerGroup)
 	         	.channel(NioSocketChannel.class)
 	         	.handler(new ClientInitializer());
 	         	
 	            // Start the client.
-	            ChannelFuture f = bootstrap.connect(host, port).sync(); // (5)
+	            ChannelFuture f = bootstrap.connect(host, port).sync(); 
 	            
 	            ClientDataHandler sendText =  f.channel().pipeline().get(ClientDataHandler.class);	           
 	            System.out.println("sending data");
@@ -44,6 +45,18 @@ public class ClientConnector {
 		 finally {
 			 workerGroup.shutdownGracefully();
 		 }
+	}
+	
+	public static void main(String... args){
+		System.out.println("Running client...");
+		
+		try {
+			new ClientConnector("localhost",26002).run();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+
 	}
 	
 }

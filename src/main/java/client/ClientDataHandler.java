@@ -18,7 +18,7 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
        
         cTx = ctx;        
-        System.out.println("Client channel connection activated");
+        System.out.println("Client channel activated");
     	
     }
 	
