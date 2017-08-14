@@ -17,7 +17,7 @@ dependencies {
 
 task asServer(type: JavaExec) {
   classpath sourceSets.main.runtimeClasspath
-  main = "Main"
+  main = "server.ServerListener"
   
 }
 

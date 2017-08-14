@@ -1,5 +1,6 @@
 package server;
 
+import client.ClientConnector;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
@@ -15,7 +16,7 @@ public class ServerListener {
 		this.port=port;
 	}
 	
-	public void run() throws InterruptedException {
+	public void runAsTest() throws InterruptedException {
 	    EventLoopGroup bossGroup = new NioEventLoopGroup(); 
 	    EventLoopGroup workerGroup = new NioEventLoopGroup();
 	    try {
@@ -33,5 +34,16 @@ public class ServerListener {
 	        workerGroup.shutdownGracefully();
 	        bossGroup.shutdownGracefully();
 	    }
+	}
+	
+	public static void main(String... args){
+		System.out.println("Running server...");
+		
+		try {
+			new ServerListener(26002).runAsTest();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 }

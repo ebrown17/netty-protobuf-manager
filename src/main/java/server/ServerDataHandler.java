@@ -16,8 +16,17 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
 	
 	@Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("Server channel activated");
+        System.out.println("Remote peer made connection");
     	
     }
+	
+	@Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+       
+        cTx = ctx;        
+        System.out.println("Remote peer connection closed");
+    	
+    }
+	
 
 }

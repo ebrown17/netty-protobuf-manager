@@ -6,7 +6,7 @@ public class Main {
 		System.out.println("Running server...");
 		
 		try {
-			new ServerListener(26002).run();
+			new ServerListener(26002).runAsTest();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
