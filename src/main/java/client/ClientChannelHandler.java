@@ -9,9 +9,15 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import protobuf.ProtobufMessage;
 
-public class ClientInitializer extends ChannelInitializer<SocketChannel>{
+public class ClientChannelHandler extends ChannelInitializer<SocketChannel>{
 	
-
+private ClientConnector client;
+	
+	public ClientChannelHandler(ClientConnector client){
+		this.client=client;
+	
+	}
+	
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
 	    ChannelPipeline p = ch.pipeline();   
@@ -20,7 +26,7 @@ public class ClientInitializer extends ChannelInitializer<SocketChannel>{
 	    p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
 	    p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
 	    p.addLast("protobufEncoder",new ProtobufEncoder());
-	    p.addLast(new ClientDataHandler());
+	    p.addLast(new ClientDataHandler(client));
 	  		
 	}
 	
