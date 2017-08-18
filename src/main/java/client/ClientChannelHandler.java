@@ -22,9 +22,10 @@ public class ClientChannelHandler extends ChannelInitializer<SocketChannel>{
 	
 	@Override
 	protected void initChannel(SocketChannel ch) throws Exception {
-	    ChannelPipeline p = ch.pipeline();   
-	    p.addLast("idleStateHandler",new IdleStateHandler(READ_IDLE_TIME,0,0));
-	    p.addLast("heartBeatHandler",new ClientHeartBeatHandler(HEARTBEAT_RETRY_LIMIT));
+	    ChannelPipeline p = ch.pipeline();  
+	    //TODO implement heartbeat protocol
+	   /* p.addLast("idleStateHandler",new IdleStateHandler(READ_IDLE_TIME,0,0));
+	    p.addLast("heartBeatHandler",new ClientHeartBeatHandler(HEARTBEAT_RETRY_LIMIT,p.channel()));*/
 	    p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
 	    p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
 	    p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());

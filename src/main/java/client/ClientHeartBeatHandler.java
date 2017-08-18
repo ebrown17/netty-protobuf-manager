@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import client.ClientDataHandler;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
@@ -22,8 +23,9 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
      *        If limit is reached; connection will be closed and retry logic in {@code ClientDataHandler} channel inactive method is called.
      */
 	
-	public ClientHeartBeatHandler(int maxTimeouts){
+	public ClientHeartBeatHandler(int maxTimeouts, Channel channel){
 		this.maxTimeouts = maxTimeouts;
+		this.handler =  channel.pipeline().get(ClientDataHandler.class);
 	}
 		
 	@Override
@@ -33,11 +35,10 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
             if (e.state() == IdleState.READER_IDLE) {
             	
             	if(timeoutCount >= maxTimeouts){
-            		logger.info("userEventTriggered No heartbeat reponse for {} seconds. Closing Connection.",maxTimeouts * 10);
+            		logger.info("userEventTriggered No heartbeat read for {} seconds. Closing Connection.",maxTimeouts * 10);
             		ctx.close();
             	}
             	else {
-            		handler =  ctx.channel().pipeline().get(ClientDataHandler.class);
                 	handler.sendheartBeat();
                 	timeoutCount++;
             	}

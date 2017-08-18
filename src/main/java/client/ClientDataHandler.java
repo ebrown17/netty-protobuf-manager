@@ -21,28 +21,28 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, ProtobufMessage.ProtobufData msg) throws Exception {
-		// TODO Auto-generated method stub
+		logger.info("channelRead0 > {} sent: {}",client.getHost(), msg.toString().replace("\n", ""));
 		
 	}
 	
 	@Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {       
         cTx = ctx;
-        logger.info("channelActive Client connected to remote peer");
+        logger.info("channelActive > Client connected to {} on port {}",client.getHost(),client.getPort());
         client.resetRetryCount();            	
     }
 	
 	@Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		client.setConnection(false);
-		logger.info("channelInactive Client disconnected from remote peer");
+		logger.info("channelInactive > Client disconnected from {}",client.getHost());
         client.connect();
     	
     }
 	
 	public void sendData(int count){
-		if(client.isConnected()){
-			logger.debug("sendData sending... {} ", count);
+		if(client.isConnected() && cTx.channel().isWritable()){
+			logger.debug("sendData > sending... {} ", count);
 			ProtobufMessage.ProtobufData data = ProtobufMessage.ProtobufData.newBuilder().setDataString("Test").setDataNumber(count).build();
 			cTx.writeAndFlush(data);
 		}		
@@ -50,8 +50,11 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
 	}
 	
 	public void sendheartBeat(){
-			logger.debug("sendheartBeat sending... {} ", heartbeat);
-			cTx.writeAndFlush(heartbeat);
+			if(client.isConnected() && cTx.channel().isWritable()){
+				logger.debug("sendheartBeat > sending... {} ", heartbeat);
+				cTx.writeAndFlush(heartbeat);
+			}
+			
 	}
 	
 
