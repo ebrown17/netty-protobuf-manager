@@ -17,10 +17,11 @@ public class ClientConnectionListener implements ChannelFutureListener{
 		this.reconnectInterval=reconnectInterval;
 	}
 	
+	//TODO throw proper exception and handle correctly
 	@Override
 	public void operationComplete(ChannelFuture future) throws Exception {
 		if(future.isSuccess()){
-			client.setConnection(true);
+			//client.setConnection(true);
 		}
 		else if(!future.isSuccess()){
 			future.channel().eventLoop().schedule(new Runnable(){

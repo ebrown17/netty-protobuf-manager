@@ -29,19 +29,16 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
     public void channelActive(ChannelHandlerContext ctx) throws Exception {       
         cTx = ctx;
         logger.info("channelActive > Client connected to {} on port {}",client.getHost(),client.getPort());
-        client.resetRetryCount();            	
     }
 	
 	@Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		client.setConnection(false);
-		logger.info("channelInactive > Client disconnected from {}",client.getHost());
-        client.connect();
+		
     	
     }
 	
 	public void sendData(int count){
-		if(client.isConnected() && cTx.channel().isWritable()){
+		if(client.isActive() && cTx.channel().isWritable()){
 			logger.debug("sendData > sending... {} ", count);
 			ProtobufMessage.ProtobufData data = ProtobufMessage.ProtobufData.newBuilder().setDataString("Test").setDataNumber(count).build();
 			cTx.writeAndFlush(data);
@@ -50,7 +47,7 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
 	}
 	
 	public void sendheartBeat(){
-			if(client.isConnected() && cTx.channel().isWritable()){
+			if(client.isActive() && cTx.channel().isWritable()){
 				logger.debug("sendheartBeat > sending... {} ", heartbeat);
 				cTx.writeAndFlush(heartbeat);
 			}
