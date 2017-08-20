@@ -11,30 +11,30 @@ import protobuf.ProtobufMessage;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-	private ServerListener server;
-	private static final int WRITE_IDLE_TIME = 10;
+  private ServerListener server;
+  private static final int WRITE_IDLE_TIME = 10;
 
-	public ServerChannelInitializer(ServerListener server) {
-		this.server = server;
-	}
+  public ServerChannelInitializer(ServerListener server) {
+    this.server = server;
+  }
 
-	@Override
-	protected void initChannel(SocketChannel ch) throws Exception {
-		ChannelPipeline p = ch.pipeline();
-		
-		// TODO implement heartbeat protocol
-		/*
-		 * p.addLast("idleStateHandler", new IdleStateHandler(0,
-		 * WRITE_IDLE_TIME, 0)); p.addLast("heartBeatHandler", new
-		 * ServerHeartbeatHandler());
-		 */
+  @Override
+  protected void initChannel(SocketChannel ch) throws Exception {
+    ChannelPipeline p = ch.pipeline();
 
-		p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-		p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
-		p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
-		p.addLast("protobufEncoder", new ProtobufEncoder());
-		p.addLast(new ServerDataHandler(server));
+    // TODO implement heartbeat protocol
+    /*
+     * p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));
+     * p.addLast("heartBeatHandler", new ServerHeartbeatHandler());
+     */
 
-	}
+    p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
+    p.addLast("protobufDecoder",
+        new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
+    p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
+    p.addLast("protobufEncoder", new ProtobufEncoder());
+    p.addLast(new ServerDataHandler(server));
+
+  }
 
 }

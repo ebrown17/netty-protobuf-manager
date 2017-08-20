@@ -16,88 +16,88 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 
 public class ServerListener {
 
-	private int port;
-	private EventLoopGroup bossGroup;
-	private EventLoopGroup workerGroup;
-	private ServerBootstrap bootstrap;
-	private ChannelFuture channelFuture;
-	private Channel channel;
-	private final Logger logger = LoggerFactory.getLogger("server.ServerListener");
+  private int port;
+  private EventLoopGroup bossGroup;
+  private EventLoopGroup workerGroup;
+  private ServerBootstrap bootstrap;
+  private ChannelFuture channelFuture;
+  private Channel channel;
+  private final Logger logger = LoggerFactory.getLogger("server.ServerListener");
 
-	public ServerListener(int port) {
-		this.port = port;
-	}
+  public ServerListener(int port) {
+    this.port = port;
+  }
 
-	public void configureServer() {
-		bossGroup = new NioEventLoopGroup();
-		workerGroup = new NioEventLoopGroup();
-		bootstrap = new ServerBootstrap();
-		bootstrap.group(bossGroup, workerGroup);
-		bootstrap.channel(NioServerSocketChannel.class);
-		bootstrap.childHandler(new ServerChannelInitializer(this));
-		bootstrap.option(ChannelOption.SO_BACKLOG, 25);
-		bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
-	}
+  public void configureServer() {
+    bossGroup = new NioEventLoopGroup();
+    workerGroup = new NioEventLoopGroup();
+    bootstrap = new ServerBootstrap();
+    bootstrap.group(bossGroup, workerGroup);
+    bootstrap.channel(NioServerSocketChannel.class);
+    bootstrap.childHandler(new ServerChannelInitializer(this));
+    bootstrap.option(ChannelOption.SO_BACKLOG, 25);
+    bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
+  }
 
-	public void startServer() {
+  public void startServer() {
 
-		channelFuture = bootstrap.bind(port);
+    channelFuture = bootstrap.bind(port);
 
-		try {
-			channelFuture.await();
-		} catch (InterruptedException e) {
-			throw new RuntimeException("Interrupted waiting for bind");
-		}
-		if (!channelFuture.isSuccess()) {
-			logger.debug("startServer > Server failed to bind to port {} ", port);
-		} else {
-			channel = channelFuture.channel();
-		}
+    try {
+      channelFuture.await();
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Interrupted waiting for bind");
+    }
+    if (!channelFuture.isSuccess()) {
+      logger.debug("startServer > Server failed to bind to port {} ", port);
+    } else {
+      channel = channelFuture.channel();
+    }
 
-		logger.debug("startServer > Server listening for connections... ");
+    logger.debug("startServer > Server listening for connections... ");
 
-	}
+  }
 
-	public void shutdownServer() {
-		logger.debug("shutdownServer > Shutting down server ");
+  public void shutdownServer() {
+    logger.debug("shutdownServer > Shutting down server ");
 
-		if (channel == null || !channel.isOpen()) {
-			return;
-		}
+    if (channel == null || !channel.isOpen()) {
+      return;
+    }
 
-		channel.close().addListener(new ChannelFutureListener() {
+    channel.close().addListener(new ChannelFutureListener() {
 
-			@Override
-			public void operationComplete(ChannelFuture future) throws Exception {
-				if (!future.isSuccess()) {
-					logger.warn("shutdownServer > Server shutdown error {}", future.cause());
-				}
-				bossGroup.shutdownGracefully();
-				workerGroup.shutdownGracefully();
+      @Override
+      public void operationComplete(ChannelFuture future) throws Exception {
+        if (!future.isSuccess()) {
+          logger.warn("shutdownServer > Server shutdown error {}", future.cause());
+        }
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
 
-			}
+      }
 
-		});
+    });
 
-	}
+  }
 
-	public void runAsTest() throws InterruptedException {
-		logger.debug("runAsTest > Server Starting... ");
-		configureServer();
-		startServer();
-	}
+  public void runAsTest() throws InterruptedException {
+    logger.debug("runAsTest > Server Starting... ");
+    configureServer();
+    startServer();
+  }
 
-	public static void main(String... args) {
+  public static void main(String... args) {
 
-		try {
-			ServerListener test = new ServerListener(26002);
-			test.runAsTest();
-			Thread.sleep(60000);
-			test.shutdownServer();
+    try {
+      ServerListener test = new ServerListener(26002);
+      test.runAsTest();
+      Thread.sleep(60000);
+      test.shutdownServer();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
 
-	}
+  }
 }

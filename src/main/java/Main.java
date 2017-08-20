@@ -3,14 +3,12 @@ import org.slf4j.LoggerFactory;
 
 
 public class Main {
-	final static Logger logger = LoggerFactory.getLogger("Main");
-	
-	public static void main(String... args){
-	
-		logger.info("Entering application.");
-	
-	}
+  final static Logger logger = LoggerFactory.getLogger("Main");
 
-	
+  public static void main(String... args) {
+
+    logger.info("Entering application.");
+
+  }
 
 }
