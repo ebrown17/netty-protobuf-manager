@@ -1,6 +1,7 @@
 package server;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +23,11 @@ public class ServerListener {
   private ServerBootstrap bootstrap;
   private ChannelFuture channelFuture;
   private Channel channel;
+  private InetSocketAddress socketAddress;
   private final Logger logger = LoggerFactory.getLogger("server.ServerListener");
 
-  public ServerListener(int port) {
-    this.port = port;
+  public ServerListener(InetSocketAddress socketAddress) {
+    this.socketAddress = socketAddress;
   }
 
   public void configureServer() {
@@ -41,7 +43,7 @@ public class ServerListener {
 
   public void startServer() {
 
-    channelFuture = bootstrap.bind(port);
+    channelFuture = bootstrap.bind(socketAddress);
 
     try {
       channelFuture.await();
@@ -81,6 +83,11 @@ public class ServerListener {
 
   }
 
+  public String getServerName(){
+    return socketAddress.getHostString();
+    
+  }
+  
   public void runAsTest() throws InterruptedException {
     logger.debug("runAsTest > Server Starting... ");
     configureServer();
@@ -90,7 +97,10 @@ public class ServerListener {
   public static void main(String... args) {
 
     try {
-      ServerListener test = new ServerListener(26002);
+      
+      InetSocketAddress socketAddress = new InetSocketAddress(26002);
+      
+      ServerListener test = new ServerListener(socketAddress);
       test.runAsTest();
       Thread.sleep(60000);
       test.shutdownServer();
