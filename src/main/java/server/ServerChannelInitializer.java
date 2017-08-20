@@ -29,8 +29,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
      */
 
     p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-    p.addLast("protobufDecoder",
-        new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
+    p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
     p.addLast(new ServerDataHandler(server));

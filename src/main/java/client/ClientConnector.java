@@ -76,8 +76,7 @@ public class ClientConnector {
         public void operationComplete(ChannelFuture future) throws Exception {
 
           if (!disconnectIntiated) {
-            logger.warn(
-                "connect.closeFuture > Client connection lost, initiating reconnect logic... ");
+            logger.warn("connect.closeFuture > Client connection lost, initiating reconnect logic... ");
             connect();
           } else {
             workerGroup.shutdownGracefully();
@@ -136,16 +135,13 @@ public class ClientConnector {
    */
   private long calculateRetryTime() {
     if (retryCount >= MAX_RETRY_UNTIL_INCR) {
-      logger.debug(
-          "calculateRetryTime > {}>={} setting {} as retry interval: total time retrying {} seconds",
+      logger.debug("calculateRetryTime > {}>={} setting {} as retry interval: total time retrying {} seconds",
           retryCount, MAX_RETRY_UNTIL_INCR, MAX_RETRY_TIME,
-          ((retryCount - MAX_RETRY_UNTIL_INCR) * MAX_RETRY_TIME)
-              + (MAX_RETRY_UNTIL_INCR * RETRY_TIME));
+          ((retryCount - MAX_RETRY_UNTIL_INCR) * MAX_RETRY_TIME) + (MAX_RETRY_UNTIL_INCR * RETRY_TIME));
       retryCount++;
       return MAX_RETRY_TIME;
     } else {
-      logger.debug(
-          "calculateRetryTime > {}<{} setting {} seconds as retry interval: total time retrying {} seconds",
+      logger.debug("calculateRetryTime > {}<{} setting {} seconds as retry interval: total time retrying {} seconds",
           retryCount, MAX_RETRY_UNTIL_INCR, RETRY_TIME, RETRY_TIME * retryCount);
       retryCount++;
       return RETRY_TIME;

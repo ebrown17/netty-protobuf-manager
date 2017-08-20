@@ -29,8 +29,7 @@ public class ClientChannelHandler extends ChannelInitializer<SocketChannel> {
      * p.addLast("heartBeatHandler",new ClientHeartBeatHandler(HEARTBEAT_RETRY_LIMIT,p.channel()));
      */
     p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-    p.addLast("protobufDecoder",
-        new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
+    p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
     p.addLast(new ClientDataHandler(client));
