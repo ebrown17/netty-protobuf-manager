@@ -25,8 +25,7 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
   }
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, ProtobufMessage.ProtobufData msg)
-      throws Exception {
+  protected void channelRead0(ChannelHandlerContext ctx, ProtobufMessage.ProtobufData msg) throws Exception {
     logger.info("channelRead0 > {} sent: {}", clientAddress, msg.toString().replace("\n", ""));
 
 
@@ -37,8 +36,8 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
     cTx = ctx;
     InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
     InetAddress inetaddress = socketAddress.getAddress();
-    clientAddress = inetaddress.getHostName() == null ? ctx.channel().remoteAddress().toString()
-        : inetaddress.getHostName();
+    clientAddress =
+        inetaddress.getHostName() == null ? ctx.channel().remoteAddress().toString() : inetaddress.getHostName();
     logger.info("channelActive > connection made from {}", clientAddress);
   }
 
@@ -53,6 +52,12 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
       logger.debug("sendheartBeat > sending... {} ", heartbeat);
       cTx.writeAndFlush(heartbeat);
     }
+  }
+  
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    logger.warn("Exception in connection from {} cause {}", clientAddress, cause.toString());
+      ctx.close();
   }
 
 }

@@ -23,6 +23,7 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, ProtobufMessage.ProtobufData msg)
       throws Exception {
+   
     logger.info("channelRead0 > {} sent: {}", client.getHost(), msg.toString().replace("\n", ""));
 
   }
@@ -56,6 +57,12 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
       cTx.writeAndFlush(heartbeat);
     }
 
+  }
+  
+  @Override
+  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+    logger.warn("Exception in connection from {} cause {}", client.getHost(), cause.toString());
+      ctx.close();
   }
 
 
