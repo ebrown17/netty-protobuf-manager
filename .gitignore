@@ -7,7 +7,7 @@
                 */.cvsignore
 
 ### Eclipse ###
-
+*.log
 .metadata
 bin/
 tmp/
