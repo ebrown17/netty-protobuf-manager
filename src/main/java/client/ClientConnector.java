@@ -94,7 +94,8 @@ public class ClientConnector {
 
   public void disconnect() throws IOException {
     if (channel == null || !channel.isOpen()) {
-      return;
+    	logger.info("disconnect > disconnect called when connection already closed");
+    	return;
     }
     disconnectIntiated = true;
     logger.info("disconnect > disconnect explicitly called");
