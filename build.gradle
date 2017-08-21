@@ -23,7 +23,7 @@ dependencies {
 task asServer(type: JavaExec) {
   classpath sourceSets.main.runtimeClasspath + files('config')
   
-  main = "server.ServerListener"
+  main = "server.Server"
   
 }
 

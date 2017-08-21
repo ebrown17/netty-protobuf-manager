@@ -1,11 +1,11 @@
 package server;
 
-import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.core.net.server.ServerListener;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -15,7 +15,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-public class ServerListener {
+public class Server {
 
   private int port;
   private EventLoopGroup bossGroup;
@@ -26,7 +26,7 @@ public class ServerListener {
   private InetSocketAddress socketAddress;
   private final Logger logger = LoggerFactory.getLogger("server.ServerListener");
 
-  public ServerListener(InetSocketAddress socketAddress) {
+  public Server(InetSocketAddress socketAddress) {
     this.socketAddress = socketAddress;
   }
 
@@ -66,9 +66,9 @@ public class ServerListener {
     if (channel == null || !channel.isOpen()) {
       return;
     }
-
+    
     channel.close().addListener(new ChannelFutureListener() {
-
+      
       @Override
       public void operationComplete(ChannelFuture future) throws Exception {
         if (!future.isSuccess()) {
@@ -100,10 +100,10 @@ public class ServerListener {
       
       InetSocketAddress socketAddress = new InetSocketAddress(26002);
       
-      ServerListener test = new ServerListener(socketAddress);
+      Server test = new Server(socketAddress);
       test.runAsTest();
-      Thread.sleep(60000);
-      test.shutdownServer();
+    /*  Thread.sleep(60000);
+      test.shutdownServer();*/
 
     } catch (Exception e) {
       e.printStackTrace();

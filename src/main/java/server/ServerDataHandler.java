@@ -12,28 +12,28 @@ import protobuf.ProtobufMessage;
 
 public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessage.ProtobufData> {
 
-  private ChannelHandlerContext cTx;
-  private ServerListener server;
+  private ChannelHandlerContext ctx;
+  private Server server;
   private ServerDataHandler handler;
   private String clientAddress;
   private final Logger logger = LoggerFactory.getLogger("server.ServerDataHandler");
   private final static ProtobufMessage.ProtobufData heartbeat =
       ProtobufMessage.ProtobufData.newBuilder().setDataString("HeartBeat").build();
 
-  public ServerDataHandler(ServerListener server) {
+  public ServerDataHandler(Server server) {
     this.server = server;
   }
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, ProtobufMessage.ProtobufData msg) throws Exception {
     logger.info("channelRead0 > {} sent: {}", clientAddress, msg.toString().replace("\n", ""));
-
+    msg =null;
 
   }
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    cTx = ctx;
+    this.ctx = ctx;
     InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
     InetAddress inetaddress = socketAddress.getAddress();
     clientAddress =
@@ -48,9 +48,9 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
   }
 
   public void sendheartBeat() {
-    if (cTx.channel().isWritable()) {
+    if (ctx.channel().isWritable()) {
       logger.debug("sendheartBeat > sending... {} ", heartbeat);
-      cTx.writeAndFlush(heartbeat);
+      ctx.writeAndFlush(heartbeat);
     }
   }
   
