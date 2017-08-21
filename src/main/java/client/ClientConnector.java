@@ -1,7 +1,7 @@
 package client;
 
-import java.io.Closeable;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
@@ -26,7 +26,8 @@ public class ClientConnector {
   private Channel channel;
   private ClientDataHandler handler;
   private boolean disconnectIntiated;
-
+  private  InetSocketAddress serverAddress;
+  
   private static final long RETRY_TIME = 10L;
   private static final long MAX_RETRY_TIME = 60L;
   private static final int MAX_RETRY_UNTIL_INCR = 30;
@@ -36,9 +37,10 @@ public class ClientConnector {
 
   private final Logger logger = LoggerFactory.getLogger("client.ClientConnector");
 
-  public ClientConnector(String host, int port) {
-    this.host = host;
-    this.port = port;
+  public ClientConnector(InetSocketAddress serverAddress) {
+    this.serverAddress= serverAddress;
+    this.host = serverAddress.getHostString();
+    this.port = serverAddress.getPort();
   }
 
   public void configureConnection() {
@@ -53,7 +55,7 @@ public class ClientConnector {
 
   public void connect() {
 
-    channelFuture = bootstrap.connect(host, port);
+    channelFuture = bootstrap.connect(serverAddress);
     try {
       channelFuture.await();
     } catch (InterruptedException e) {
@@ -151,7 +153,10 @@ public class ClientConnector {
   public static void main(String... args) {
 
     try {
-      ClientConnector test = new ClientConnector("localhost", 26002);
+      
+      InetSocketAddress serverAddress = new InetSocketAddress("localhost",26002);
+      
+      ClientConnector test = new ClientConnector(serverAddress);
       test.configureConnection();
       test.connect();
       int count = 0;
@@ -161,17 +166,17 @@ public class ClientConnector {
           test.sendData(count);
           Thread.sleep(1000);
 
-          if (count == 100) {
+         /* if (count == 100) {
 
             break;
-          }
+          }*/
         } catch (Exception es) {
 
         }
 
       }
 
-      test.disconnect();
+     // test.disconnect();
 
     } catch (Exception e) {
 

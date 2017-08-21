@@ -23,6 +23,7 @@ public class ClientChannelHandler extends ChannelInitializer<SocketChannel> {
   @Override
   protected void initChannel(SocketChannel ch) throws Exception {
     ChannelPipeline p = ch.pipeline();
+    
     // TODO implement heartbeat protocol
     /*
      * p.addLast("idleStateHandler",new IdleStateHandler(READ_IDLE_TIME,0,0));
