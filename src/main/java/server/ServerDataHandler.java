@@ -8,9 +8,10 @@ import org.slf4j.LoggerFactory;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import protobuf.JdssAuditor;
 import protobuf.ProtobufMessage;
 
-public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessage.ProtobufData> {
+public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
 
   private ChannelHandlerContext ctx;
   private Server server;
@@ -25,8 +26,8 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
   }
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, ProtobufMessage.ProtobufData msg) throws Exception {
-    logger.info("channelRead0 > {} sent: {}", clientAddress, msg.toString().replace("\n", ""));
+  protected void channelRead0(ChannelHandlerContext ctx, JdssAuditor.DisplayData msg) throws Exception {
+    logger.info("channelRead0 > {} sent: {}", clientAddress, msg.toString());
     msg =null;
 
   }

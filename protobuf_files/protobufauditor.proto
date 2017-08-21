@@ -8,7 +8,7 @@ option java_outer_classname = "JdssAuditor";
 message DisplayData {
     
     AuditorMessageType messageType = 1;
-    string platform = 2;
+    int32 platform = 2;
     BoardingAdvice boardingAdvice = 3;
     ShortEta shortEta = 4;
     Destination destination = 5;

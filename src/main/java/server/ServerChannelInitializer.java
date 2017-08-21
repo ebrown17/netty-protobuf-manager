@@ -7,6 +7,7 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import protobuf.JdssAuditor;
 import protobuf.ProtobufMessage;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
@@ -29,7 +30,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
      */
 
     p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-    p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
+    p.addLast("protobufDecoder", new ProtobufDecoder(JdssAuditor.DisplayData.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
     p.addLast(new ServerDataHandler(server));

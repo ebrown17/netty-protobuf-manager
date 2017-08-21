@@ -28,14 +28,9 @@ public final class JdssAuditor {
     protobuf.JdssAuditor.DisplayData.AuditorMessageType getMessageType();
 
     /**
-     * <code>string platform = 2;</code>
+     * <code>int32 platform = 2;</code>
      */
-    java.lang.String getPlatform();
-    /**
-     * <code>string platform = 2;</code>
-     */
-    com.google.protobuf.ByteString
-        getPlatformBytes();
+    int getPlatform();
 
     /**
      * <code>.protobuf.displaydata.DisplayData.BoardingAdvice boardingAdvice = 3;</code>
@@ -167,7 +162,7 @@ public final class JdssAuditor {
     }
     private DisplayData() {
       messageType_ = 0;
-      platform_ = "";
+      platform_ = 0;
     }
 
     @java.lang.Override
@@ -201,10 +196,9 @@ public final class JdssAuditor {
               messageType_ = rawValue;
               break;
             }
-            case 18: {
-              java.lang.String s = input.readStringRequireUtf8();
+            case 16: {
 
-              platform_ = s;
+              platform_ = input.readInt32();
               break;
             }
             case 26: {
@@ -6601,37 +6595,12 @@ public final class JdssAuditor {
     }
 
     public static final int PLATFORM_FIELD_NUMBER = 2;
-    private volatile java.lang.Object platform_;
+    private int platform_;
     /**
-     * <code>string platform = 2;</code>
+     * <code>int32 platform = 2;</code>
      */
-    public java.lang.String getPlatform() {
-      java.lang.Object ref = platform_;
-      if (ref instanceof java.lang.String) {
-        return (java.lang.String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        java.lang.String s = bs.toStringUtf8();
-        platform_ = s;
-        return s;
-      }
-    }
-    /**
-     * <code>string platform = 2;</code>
-     */
-    public com.google.protobuf.ByteString
-        getPlatformBytes() {
-      java.lang.Object ref = platform_;
-      if (ref instanceof java.lang.String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8(
-                (java.lang.String) ref);
-        platform_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
+    public int getPlatform() {
+      return platform_;
     }
 
     public static final int BOARDINGADVICE_FIELD_NUMBER = 3;
@@ -6838,8 +6807,8 @@ public final class JdssAuditor {
       if (messageType_ != protobuf.JdssAuditor.DisplayData.AuditorMessageType.UNKNOWN.getNumber()) {
         output.writeEnum(1, messageType_);
       }
-      if (!getPlatformBytes().isEmpty()) {
-        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, platform_);
+      if (platform_ != 0) {
+        output.writeInt32(2, platform_);
       }
       if (boardingAdvice_ != null) {
         output.writeMessage(3, getBoardingAdvice());
@@ -6879,8 +6848,9 @@ public final class JdssAuditor {
         size += com.google.protobuf.CodedOutputStream
           .computeEnumSize(1, messageType_);
       }
-      if (!getPlatformBytes().isEmpty()) {
-        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, platform_);
+      if (platform_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, platform_);
       }
       if (boardingAdvice_ != null) {
         size += com.google.protobuf.CodedOutputStream
@@ -6935,8 +6905,8 @@ public final class JdssAuditor {
 
       boolean result = true;
       result = result && messageType_ == other.messageType_;
-      result = result && getPlatform()
-          .equals(other.getPlatform());
+      result = result && (getPlatform()
+          == other.getPlatform());
       result = result && (hasBoardingAdvice() == other.hasBoardingAdvice());
       if (hasBoardingAdvice()) {
         result = result && getBoardingAdvice()
@@ -6995,7 +6965,7 @@ public final class JdssAuditor {
       hash = (37 * hash) + MESSAGETYPE_FIELD_NUMBER;
       hash = (53 * hash) + messageType_;
       hash = (37 * hash) + PLATFORM_FIELD_NUMBER;
-      hash = (53 * hash) + getPlatform().hashCode();
+      hash = (53 * hash) + getPlatform();
       if (hasBoardingAdvice()) {
         hash = (37 * hash) + BOARDINGADVICE_FIELD_NUMBER;
         hash = (53 * hash) + getBoardingAdvice().hashCode();
@@ -7163,7 +7133,7 @@ public final class JdssAuditor {
         super.clear();
         messageType_ = 0;
 
-        platform_ = "";
+        platform_ = 0;
 
         if (boardingAdviceBuilder_ == null) {
           boardingAdvice_ = null;
@@ -7332,9 +7302,8 @@ public final class JdssAuditor {
         if (other.messageType_ != 0) {
           setMessageTypeValue(other.getMessageTypeValue());
         }
-        if (!other.getPlatform().isEmpty()) {
-          platform_ = other.platform_;
-          onChanged();
+        if (other.getPlatform() != 0) {
+          setPlatform(other.getPlatform());
         }
         if (other.hasBoardingAdvice()) {
           mergeBoardingAdvice(other.getBoardingAdvice());
@@ -7433,71 +7402,28 @@ public final class JdssAuditor {
         return this;
       }
 
-      private java.lang.Object platform_ = "";
+      private int platform_ ;
       /**
-       * <code>string platform = 2;</code>
+       * <code>int32 platform = 2;</code>
        */
-      public java.lang.String getPlatform() {
-        java.lang.Object ref = platform_;
-        if (!(ref instanceof java.lang.String)) {
-          com.google.protobuf.ByteString bs =
-              (com.google.protobuf.ByteString) ref;
-          java.lang.String s = bs.toStringUtf8();
-          platform_ = s;
-          return s;
-        } else {
-          return (java.lang.String) ref;
-        }
+      public int getPlatform() {
+        return platform_;
       }
       /**
-       * <code>string platform = 2;</code>
+       * <code>int32 platform = 2;</code>
        */
-      public com.google.protobuf.ByteString
-          getPlatformBytes() {
-        java.lang.Object ref = platform_;
-        if (ref instanceof String) {
-          com.google.protobuf.ByteString b = 
-              com.google.protobuf.ByteString.copyFromUtf8(
-                  (java.lang.String) ref);
-          platform_ = b;
-          return b;
-        } else {
-          return (com.google.protobuf.ByteString) ref;
-        }
-      }
-      /**
-       * <code>string platform = 2;</code>
-       */
-      public Builder setPlatform(
-          java.lang.String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  
+      public Builder setPlatform(int value) {
+        
         platform_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>string platform = 2;</code>
+       * <code>int32 platform = 2;</code>
        */
       public Builder clearPlatform() {
         
-        platform_ = getDefaultInstance().getPlatform();
-        onChanged();
-        return this;
-      }
-      /**
-       * <code>string platform = 2;</code>
-       */
-      public Builder setPlatformBytes(
-          com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  checkByteStringIsUtf8(value);
-        
-        platform_ = value;
+        platform_ = 0;
         onChanged();
         return this;
       }
@@ -8670,7 +8596,7 @@ public final class JdssAuditor {
       "\n\025protobufauditor.proto\022\024protobuf.displa" +
       "ydata\"\260\n\n\013DisplayData\022I\n\013messageType\030\001 \001" +
       "(\01624.protobuf.displaydata.DisplayData.Au" +
-      "ditorMessageType\022\020\n\010platform\030\002 \001(\t\022H\n\016bo" +
+      "ditorMessageType\022\020\n\010platform\030\002 \001(\005\022H\n\016bo" +
       "ardingAdvice\030\003 \001(\01320.protobuf.displaydat" +
       "a.DisplayData.BoardingAdvice\022<\n\010shortEta" +
       "\030\004 \001(\0132*.protobuf.displaydata.DisplayDat" +

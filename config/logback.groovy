@@ -8,7 +8,7 @@ scan('1 Minutes')
 
 // config file constants
 def logFileDate = timestamp('yyyy-MM-dd_HHmmss')
-def defaultLogPattern = "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36}.%msg%n"
+def defaultLogPattern = "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%msg%n"
 
 appender("STDOUT", ConsoleAppender) {
 	encoder(PatternLayoutEncoder) {
