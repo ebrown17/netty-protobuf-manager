@@ -60,7 +60,7 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    logger.warn("Exception in connection from {} cause {}", client.getHost(), cause.toString());
+    logger.warn("Exception in connection from {} cause {}", client.getHost(), cause.toString(),cause);
     ctx.close();
   }
 

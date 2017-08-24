@@ -4,8 +4,10 @@
 /CVS/*
        **/CVS/*
                 .cvsignore
-.idea/*                */.cvsignore
-
+                */.cvsignore
+.idea/*
+*.iml
+*.ipr
 ### Eclipse ###
 *.log
 .metadata
