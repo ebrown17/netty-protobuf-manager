@@ -1,7 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'application'
 apply plugin: 'eclipse'
-apply plugin: 'idea'
 
 mainClassName = "Main"
 
@@ -12,10 +11,11 @@ repositories {
 
 dependencies {
 	compile 'com.google.protobuf:protobuf-java:3.3.1'
+    compile 'org.codehaus.groovy:groovy-all:2.4.12'
 	compile 'io.netty:netty-all:4.1.14.Final'
 	compile 'org.slf4j:slf4j-api:1.7.25'	
 	compile 'ch.qos.logback:logback-classic:1.2.3'
-	compile 'org.codehaus.groovy:groovy-all:2.4.12'
+	
 	
 	runtime files('config/logback.groovy')
 }

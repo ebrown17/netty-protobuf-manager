@@ -12,13 +12,8 @@ import protobuf.ProtobufMessage;
 
 public class ClientChannelHandler extends ChannelInitializer<SocketChannel> {
 
-  private ClientConnector client;
   private static final int READ_IDLE_TIME = 10;
   private static final int HEARTBEAT_RETRY_LIMIT = 10;
-
-  public ClientChannelHandler(ClientConnector client) {
-    this.client = client;
-  }
 
   @Override
   protected void initChannel(SocketChannel ch) throws Exception {
@@ -33,7 +28,7 @@ public class ClientChannelHandler extends ChannelInitializer<SocketChannel> {
     p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
-    p.addLast(new ClientDataHandler(client));
+    p.addLast(new ClientDataHandler());
 
   }
 

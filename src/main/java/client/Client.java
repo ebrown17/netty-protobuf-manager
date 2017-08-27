@@ -8,65 +8,44 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
-public class ClientConnector {
+public class Client {
 
-  private String host;
-  private int port;
-  private EventLoopGroup workerGroup;
+  private final Logger logger = LoggerFactory.getLogger("client.Client");
+
+  private InetSocketAddress serverAddress;
   private Bootstrap bootstrap;
-  private ChannelFuture channelFuture;
   private Channel channel;
   private ClientDataHandler handler;
-  private boolean disconnectIntiated;
-  private InetSocketAddress serverAddress;
 
   private static final long RETRY_TIME = 10L;
   private static final long MAX_RETRY_TIME = 60L;
   private static final int MAX_RETRY_UNTIL_INCR = 30;
   private static final int TOTAL_MAX_RETRY_COUNT = 360;
-
   private int retryCount = 0;
+  private boolean disconnectIntiated = false;
 
-  private final Logger logger = LoggerFactory.getLogger("client.ClientConnector");
-
-  /**
-   * @param serverAddress address to connect to <br>
-   *        <br>
-   *        This class should only be used when you will only have one connection to a server.<br>
-   *        You should use ClientConnectionFactory if more than one connection will be made from the
-   *        same process.<br>
-   *        ClientConnectionFactory will share the EventLoopGroup between all clients it makes,
-   *        which will decrease overall process resources and system load.
-   *
-   */
-
-  public ClientConnector(InetSocketAddress serverAddress) {
+  public Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup) {
     this.serverAddress = serverAddress;
-    this.host = serverAddress.getHostString();
-    this.port = serverAddress.getPort();
-  }
-
-  public void configureConnection() {
-    workerGroup = new NioEventLoopGroup();
     bootstrap = new Bootstrap();
-    bootstrap.group(workerGroup);
+    bootstrap.group(sharedWorkerGroup);
     bootstrap.channel(NioSocketChannel.class);
     bootstrap.handler(new ClientChannelHandler());
     bootstrap.option(ChannelOption.TCP_NODELAY, true);
     bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+    bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
   }
 
-  public void connect() {
+  public void connect() throws InterruptedException {
 
-    channelFuture = bootstrap.connect(serverAddress);
+    ChannelFuture channelFuture = bootstrap.connect(serverAddress);
     try {
       channelFuture.await();
     }
@@ -77,17 +56,24 @@ public class ClientConnector {
       channelFuture.channel().eventLoop().schedule(new Runnable() {
         @Override
         public void run() {
-          connect();
+          try {
+            connect();
+          }
+          catch (InterruptedException e) {
+            //TODO test to see if this breaks it
+            throw new RuntimeException("Interrupted trying to connect");
+          }
         }
       }, calculateRetryTime(), TimeUnit.SECONDS);
     }
     else {
-      logger.info("connect >  Client connected to {} on port {}", host, port);
+      logger.info("connect Client connected to {} ", serverAddress);
       retryCount = 0;
       disconnectIntiated = false;
       channel = channelFuture.channel();
       handler = channel.pipeline().get(ClientDataHandler.class);
 
+      // future to handle when client connection is lost
       channel.closeFuture().addListener(new ChannelFutureListener() {
         @Override
         public void operationComplete(ChannelFuture future) throws Exception {
@@ -98,52 +84,24 @@ public class ClientConnector {
             connect();
           }
           else {
-            workerGroup.shutdownGracefully();
+            channel.close();
             logger.info("connect.closeFuture > Client fully diconnected");
           }
         }
       });
-
 
     }
 
   }
 
   public void disconnect() throws IOException {
-    if (channel == null || !channel.isOpen()) {
-      logger.info("disconnect > disconnect called when connection already closed");
+    if (channel == null || !isActive()) {
+      logger.info("disconnect disconnect called when connection already closed");
       return;
     }
     disconnectIntiated = true;
-    logger.info("disconnect > disconnect explicitly called");
+    logger.info("disconnect disconnect explicitly called");
     channel.close().awaitUninterruptibly(1, TimeUnit.SECONDS);
-
-  }
-
-  public String getHost() {
-    return host;
-  }
-
-  public int getPort() {
-    return port;
-  }
-
-  public boolean isActive() {
-    return (channel.isOpen() || channel.isActive());
-  }
-
-  public Channel getChannel() {
-    return channel;
-  }
-
-  public void sendData(int count) {
-
-    if (null == channel || !channel.isOpen()) {
-      logger.warn("sendData > tried to send data on null or closed channel");
-      return;
-    }
-
-    handler.sendData(count);
 
   }
 
@@ -171,42 +129,13 @@ public class ClientConnector {
     }
   }
 
-  public static void main(String... args) {
 
-    try {
+  public Channel getChannel() {
+    return channel;
+  }
 
-      InetSocketAddress serverAddress = new InetSocketAddress("localhost", 26002);
-
-      ClientConnector test = new ClientConnector(serverAddress);
-      test.configureConnection();
-      test.connect();
-      int count = 0;
-      while (true) {
-        try {
-          count++;
-          test.sendData(count);
-          Thread.sleep(1000);
-
-          /*
-           * if (count == 100) {
-           * 
-           * break; }
-           */
-        }
-        catch (Exception es) {
-
-        }
-
-      }
-
-      // test.disconnect();
-
-    }
-    catch (Exception e) {
-
-      e.printStackTrace();
-    }
-
+  public boolean isActive() {
+    return (channel.isOpen() || channel.isActive());
   }
 
 }
