@@ -27,8 +27,7 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, JdssAuditor.DisplayData msg) throws Exception {
-    logger.info("channelRead0 > {} sent: {}", clientAddress, msg.toString());
-    msg =null;
+    logger.info("channelRead0 {} sent: {}", clientAddress, msg.toString());
 
   }
 
@@ -39,7 +38,7 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
     InetAddress inetaddress = socketAddress.getAddress();
     clientAddress =
         inetaddress.getHostName() == null ? ctx.channel().remoteAddress().toString() : inetaddress.getHostName();
-    logger.info("channelActive > connection made from {}", clientAddress);
+    logger.info("channelActive connection made from {}", clientAddress);
   }
 
   @Override
