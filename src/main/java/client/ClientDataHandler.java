@@ -3,6 +3,7 @@ package client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import protobuf.ProtobufMessage;
@@ -11,11 +12,9 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
 
   private Client client;
   private final Logger logger = LoggerFactory.getLogger("client.ClientDataHandler");
-  private final static ProtobufMessage.ProtobufData heartbeat =
-      ProtobufMessage.ProtobufData.newBuilder().setDataString("HeartBeat").build();
-
-  public ClientDataHandler(Client client) {
-    this.client = client;
+ 
+  public ClientDataHandler() {
+   
   }
   
   @Override
@@ -36,18 +35,18 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
   }
 /*
  * Should only handle inbound traffic in ClientDataHandler
- * 
-  public void sendData(int count) {
-    if (client.isActive() && client.getChannel().isWritable()) {
+  */
+  public void sendData(int count,Channel channel) {
+    if (channel.isActive() && channel.isWritable()) {
       logger.debug("sendData > sending... {} ", count);
       ProtobufMessage.ProtobufData data =
           ProtobufMessage.ProtobufData.newBuilder().setDataString("Test").setDataNumber(count).build();
-      ctx.writeAndFlush(data);
+      channel.writeAndFlush(data);
     }
 
   }
 
-  public void sendheartBeat() {
+/*  public void sendheartBeat() {
     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
       logger.debug("sendheartBeat sending... {} ", heartbeat);
       ctx.writeAndFlush(heartbeat);
@@ -57,7 +56,7 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessa
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString());
+    logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString(),cause);
     ctx.channel().close();
   }
 

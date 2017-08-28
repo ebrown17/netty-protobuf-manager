@@ -29,13 +29,14 @@ public class ClientConnectionFactory {
     
   }
   
-  public void createClient(String host,int port) {
+  public Client createClient(String host,int port) {
     InetSocketAddress address = new  InetSocketAddress(host, port);
-    createClient(address);
+    return createClient(address);
   }
   
-  private void createClient(InetSocketAddress address) {
+  private Client createClient(InetSocketAddress address) {
     
+    return new Client(address,workerGroup);
   }
 
 }

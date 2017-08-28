@@ -30,7 +30,7 @@ public class Client {
   private static final int MAX_RETRY_UNTIL_INCR = 30;
   private static final int TOTAL_MAX_RETRY_COUNT = 360;
   private int retryCount = 0;
-  private boolean disconnectIntiated = false;
+  private boolean disconnectIntiated = true;
 
   public Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup) {
     this.serverAddress = serverAddress;
@@ -44,6 +44,9 @@ public class Client {
   }
 
   public void connect() throws InterruptedException {
+
+    if (isActive())
+      return; // If already active don't create new connection
 
     ChannelFuture channelFuture = bootstrap.connect(serverAddress);
     try {
@@ -60,7 +63,7 @@ public class Client {
             connect();
           }
           catch (InterruptedException e) {
-            //TODO test to see if this breaks it
+            // TODO test to see if this breaks it
             throw new RuntimeException("Interrupted trying to connect");
           }
         }
@@ -79,8 +82,8 @@ public class Client {
         public void operationComplete(ChannelFuture future) throws Exception {
 
           if (!disconnectIntiated) {
-            logger.warn(
-                "connect.closeFuture > Client connection lost, initiating reconnect logic... ");
+            logger
+                .warn("connect.closeFuture Client connection lost, initiating reconnect logic... ");
             connect();
           }
           else {
@@ -113,7 +116,7 @@ public class Client {
   private long calculateRetryTime() {
     if (retryCount >= MAX_RETRY_UNTIL_INCR) {
       logger.debug(
-          "calculateRetryTime > {}>={} setting {} as retry interval: total time retrying {} seconds",
+          "calculateRetryTime {}>={} setting {} as retry interval: total time retrying {} seconds",
           retryCount, MAX_RETRY_UNTIL_INCR, MAX_RETRY_TIME,
           ((retryCount - MAX_RETRY_UNTIL_INCR) * MAX_RETRY_TIME)
               + (MAX_RETRY_UNTIL_INCR * RETRY_TIME));
@@ -122,7 +125,7 @@ public class Client {
     }
     else {
       logger.debug(
-          "calculateRetryTime > {}<{} setting {} seconds as retry interval: total time retrying {} seconds",
+          "calculateRetryTime {}<{} setting {} seconds as retry interval: total time retrying {} seconds",
           retryCount, MAX_RETRY_UNTIL_INCR, RETRY_TIME, RETRY_TIME * retryCount);
       retryCount++;
       return RETRY_TIME;
@@ -135,7 +138,18 @@ public class Client {
   }
 
   public boolean isActive() {
-    return (channel.isOpen() || channel.isActive());
+    return (channel != null && (channel.isOpen() || channel.isActive()));
+  }
+
+  public void sendData(int count) {
+
+    if (null == channel || !channel.isOpen()) {
+      logger.warn("sendData tried to send data on null or closed channel");
+      return;
+    }
+
+    handler.sendData(count, channel);
+
   }
 
 }

@@ -30,6 +30,6 @@ task asServer(type: JavaExec) {
 
 task asClient(type: JavaExec) {
   classpath sourceSets.main.runtimeClasspath + files('config')
-  main = "client.ClientConnector"
+  main = "Main"
   
 }

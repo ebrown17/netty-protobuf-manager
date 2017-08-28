@@ -41,7 +41,7 @@ public class ClientConnector {
    * @param serverAddress address to connect to <br>
    *        <br>
    *        This class should only be used when you will only have one connection to a server.<br>
-   *        You should use ClientConnectionFactory if more than one connection will be made from the
+   *        You should use {@link ClientConnectionFactory} if more than one connection will be made from the
    *        same process.<br>
    *        ClientConnectionFactory will share the EventLoopGroup between all clients it makes,
    *        which will decrease overall process resources and system load.
@@ -143,7 +143,7 @@ public class ClientConnector {
       return;
     }
 
-    handler.sendData(count);
+    handler.sendData(count,channel);
 
   }
 
