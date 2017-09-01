@@ -10,7 +10,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import protobuf.ProtobufMessage;
 
-public class ClientChannelHandler extends ChannelInitializer<SocketChannel> {
+public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> {
 
   private static final int READ_IDLE_TIME = 10;
   private static final int HEARTBEAT_RETRY_LIMIT = 10;

@@ -6,59 +6,40 @@ import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import protobuf.JdssAuditor;
 import protobuf.ProtobufMessage;
 
-public class ClientDataHandler extends SimpleChannelInboundHandler<ProtobufMessage.ProtobufData> {
+public class ClientDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
 
-  private Client client;
   private final Logger logger = LoggerFactory.getLogger("client.ClientDataHandler");
  
-  public ClientDataHandler() {
-   
-  }
-  
+  private ChannelHandlerContext ctx;
+
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, ProtobufMessage.ProtobufData msg) throws Exception {
-    logger.info("channelRead0  recieved: {} from: {}", msg.toString(),ctx.channel().remoteAddress());
+  protected void channelRead0(ChannelHandlerContext ctx, JdssAuditor.DisplayData msg) throws Exception {
 
   }
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-
+    this.ctx = ctx;
   }
 
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 
-
-  }
-/*
- * Should only handle inbound traffic in ClientDataHandler
-  */
-  public void sendData(int count,Channel channel) {
-    if (channel.isActive() && channel.isWritable()) {
-      logger.debug("sendData > sending... {} ", count);
-      ProtobufMessage.ProtobufData data =
-          ProtobufMessage.ProtobufData.newBuilder().setDataString("Test").setDataNumber(count).build();
-      channel.writeAndFlush(data);
-    }
-
   }
 
-/*  public void sendheartBeat() {
+  public void sendData(DisplayData displayData) {
     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
-      logger.debug("sendheartBeat sending... {} ", heartbeat);
-      ctx.writeAndFlush(heartbeat);
+      ctx.writeAndFlush(displayData);
     }
-
-  }*/
+  }
 
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString(),cause);
-    ctx.channel().close();
+    logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString());
+    ctx.close();
   }
-
 
 }

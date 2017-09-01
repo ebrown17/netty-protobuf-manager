@@ -9,10 +9,10 @@ import io.netty.channel.ChannelFutureListener;
 
 public class ClientConnectionListener implements ChannelFutureListener {
 
-  private ClientConnector client;
+  private Client client;
   private long reconnectInterval;
 
-  public ClientConnectionListener(ClientConnector client, long reconnectInterval) {
+  public ClientConnectionListener(Client client, long reconnectInterval) {
     this.client = client;
     this.reconnectInterval = reconnectInterval;
   }
@@ -25,7 +25,12 @@ public class ClientConnectionListener implements ChannelFutureListener {
       future.channel().eventLoop().schedule(new Runnable() {
         @Override
         public void run() {
-          client.connect();
+          try {
+			client.connect();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         }
       }, reconnectInterval, TimeUnit.SECONDS);
     }
