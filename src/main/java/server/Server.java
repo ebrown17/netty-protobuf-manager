@@ -84,12 +84,13 @@ public class Server {
 
   public void shutdownServer() {
     logger.info("shutdownServer explicitly called Shutting down server ");
-    channel.closeFuture().removeListener(notNormalShutdown);
 
-    if (channel == null || !isActive()) {
+    if (!isActive()) {
       logger.info("shutdownServer server already shutdown ");
       return;
     }
+
+    channel.closeFuture().removeListener(notNormalShutdown);
 
     channel.close().addListener(new ChannelFutureListener() {
       @Override
