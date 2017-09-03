@@ -2,7 +2,6 @@ package client;
 
 import java.util.concurrent.TimeUnit;
 
-import client.ClientConnector;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
@@ -20,7 +19,6 @@ public class ClientConnectionListener implements ChannelFutureListener {
   @Override
   public void operationComplete(ChannelFuture future) throws Exception {
     if (future.isSuccess()) {
-      // client.setConnection(true);
     } else if (!future.isSuccess()) {
       future.channel().eventLoop().schedule(new Runnable() {
         @Override
