@@ -19,24 +19,24 @@ public class ClientConnectionFactory {
   private EventLoopGroup workerGroup;
   private Class<? extends Channel> channelClass;
   private PooledByteBufAllocator allocator;
-  
+
   public ClientConnectionFactory() {
     // 0 forces netty to use default number of threads which is max number of processors * 2
     // this workerGroup will be shared with all clients
-    this.workerGroup = new NioEventLoopGroup(0,new DefaultThreadFactory("-client", true));
+    this.workerGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("client", true));
     this.channelClass = NioSocketChannel.class;
     this.allocator = PooledByteBufAllocator.DEFAULT;
-    
+
   }
-  
-  public Client createClient(String host,int port) {
-    InetSocketAddress address = new  InetSocketAddress(host, port);
+
+  public Client createClient(String host, int port) {
+    InetSocketAddress address = new InetSocketAddress(host, port);
     return createClient(address);
   }
-  
+
   private Client createClient(InetSocketAddress address) {
-    
-    return new Client(address,workerGroup);
+
+    return new Client(address, workerGroup);
   }
 
 }
