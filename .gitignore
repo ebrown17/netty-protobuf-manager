@@ -1,6 +1,6 @@
 # Created by https://www.gitignore.io/api/cvs,gradle,eclipse
 
-!protobuf_files/*
+!protobuf_files/protobuf_compiler/bin/*
 
 ### CVS ###
 /CVS/*
@@ -13,7 +13,7 @@
 ### Eclipse ###
 *.log
 .metadata
-bin/
+bin/*
 tmp/
 *.tmp
 *.bak
