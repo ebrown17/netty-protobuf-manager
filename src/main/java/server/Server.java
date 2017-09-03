@@ -32,7 +32,7 @@ public class Server {
     this.socketAddress = socketAddress;
   }
 
-  public void configureServer() {
+  public void configure() {
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
     // 0 forces netty to use default number of threads which is max number of processors * 2
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
@@ -111,30 +111,5 @@ public class Server {
 
   public String getServerName() {
     return socketAddress.getHostString();
-
-  }
-
-  public void runAsTest() throws InterruptedException {
-    logger.debug("runAsTest > Server Starting... ");
-    configureServer();
-    startServer();
-  }
-
-  public static void main(String... args) {
-
-    try {
-
-      InetSocketAddress socketAddress = new InetSocketAddress(26002);
-
-      Server test = new Server(socketAddress);
-      test.runAsTest();
-
-      // Thread.sleep(5000); test.shutdownServer();
-
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-
   }
 }
