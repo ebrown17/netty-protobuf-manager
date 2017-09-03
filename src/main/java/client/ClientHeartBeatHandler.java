@@ -39,7 +39,7 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
               maxTimeouts * 10);
           ctx.close();
         } else {
-          handler.sendheartBeat();
+        //  handler.sendheartBeat();
           timeoutCount++;
         }
       } else if (e.state() == IdleState.WRITER_IDLE) {

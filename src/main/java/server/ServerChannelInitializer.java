@@ -7,15 +7,13 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-import protobuf.ProtobufMessage;
+import protobuf.JdssAuditor;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-  private Server server;
   private static final int WRITE_IDLE_TIME = 10;
 
-  public ServerChannelInitializer(Server server) {
-    this.server = server;
+  public ServerChannelInitializer() {
   }
 
   @Override
@@ -29,10 +27,10 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
      */
 
     p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
-    p.addLast("protobufDecoder", new ProtobufDecoder(ProtobufMessage.ProtobufData.getDefaultInstance()));
+    p.addLast("protobufDecoder", new ProtobufDecoder(JdssAuditor.DisplayData.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
-    p.addLast(new ServerDataHandler(server));
+    p.addLast(new ServerDataHandler());
 
   }
 

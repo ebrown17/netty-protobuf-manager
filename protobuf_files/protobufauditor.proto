@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package protobuf.displaydata;
+
+option java_package="protobuf";
+option java_outer_classname = "JdssAuditor";
+
+message DisplayData {
+    
+    AuditorMessageType messageType = 1;
+    int32 platform = 2;
+    BoardingAdvice boardingAdvice = 3;
+    ShortEta shortEta = 4;
+    Destination destination = 5;
+    NextTrain nextTrain = 6;
+    FullEta fullEta = 7;
+    ScrollInfo scrollInfo = 8;
+    Time time = 9;
+    Info info = 10;
+    OutOfService outOfService = 11;    
+    
+    enum AuditorMessageType {
+        UNKNOWN = 0;
+        BOARDING_ADVICE = 1;
+        SHORT_ETA = 2;
+        DESTINATION = 3;
+        NEXT_TRAIN = 4;
+        FULL_ETA = 5;
+        SCROLL_INFO = 6;
+        TIME = 7;
+        INFO = 8;
+        OUT_OF_SERVICE = 9;
+    } 
+    message BoardingAdvice {
+        string advice = 1;
+    }
+    message ShortEta {
+        repeated Eta shortEta = 1;
+    }
+    message Destination {
+        string destination = 1;
+        string trainLength = 2;
+        string displayType = 3;
+    }
+    message NextTrain {
+        string nextTrain = 1;
+    }
+    message FullEta {
+        repeated Eta fullEta = 1;
+    }
+    message ScrollInfo {
+        string scrollingMessage = 1;
+    }
+    message Time {
+        string time = 1;
+    }
+    message Info {
+        string info = 1;
+    }
+    message OutOfService {
+        string outOfService = 1;
+    } 
+    message Eta {
+        string destination = 1;
+        int32 length = 2;
+        int32 eta1 = 3;
+        int32 eta2 = 4;
+    }   
+    
+}
