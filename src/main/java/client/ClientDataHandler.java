@@ -7,6 +7,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import protobuf.JdssAuditor;
+import protobuf.JdssAuditor.DisplayData;
 import protobuf.ProtobufMessage;
 
 public class ClientDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
