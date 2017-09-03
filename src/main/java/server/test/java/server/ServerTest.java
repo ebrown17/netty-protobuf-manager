@@ -14,7 +14,7 @@ public class ServerTest {
     
     try {
       logger.debug("Server Starting... ");
-      InetSocketAddress socketAddress = new InetSocketAddress(26002);
+      InetSocketAddress socketAddress = new InetSocketAddress(6000);
 
       Server server = new Server(socketAddress);
       server.configure();

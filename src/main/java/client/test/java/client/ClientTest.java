@@ -26,7 +26,7 @@ public class ClientTest {
     List<Client> list = new ArrayList<Client>();
 
     for (int i = 0; i < 30; i++) {
-      list.add(ccf.createClient("localhost", 26002));
+      list.add(ccf.createClient("localhost", 6000));
    
     }
 
