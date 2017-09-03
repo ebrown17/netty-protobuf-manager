@@ -35,7 +35,6 @@ public class ClientConnectionFactory {
   }
 
   private Client createClient(InetSocketAddress address) {
-
     return new Client(address, workerGroup);
   }
 
