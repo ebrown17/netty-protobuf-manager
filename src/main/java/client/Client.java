@@ -135,7 +135,7 @@ public class Client {
 
     public void sendData(DisplayData displayData) {
 
-        if (null == channel || !channel.isOpen()) {
+        if (!isActive()) {
             logger.warn("sendData tried to send data on null or closed channel");
             return;
         }
