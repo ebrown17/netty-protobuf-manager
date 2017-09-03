@@ -19,16 +19,17 @@ public class ClientConnectionListener implements ChannelFutureListener {
   @Override
   public void operationComplete(ChannelFuture future) throws Exception {
     if (future.isSuccess()) {
-    } else if (!future.isSuccess()) {
+    }
+    else if (!future.isSuccess()) {
       future.channel().eventLoop().schedule(new Runnable() {
         @Override
         public void run() {
           try {
-			client.connect();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            client.connect();
+          } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
         }
       }, reconnectInterval, TimeUnit.SECONDS);
     }

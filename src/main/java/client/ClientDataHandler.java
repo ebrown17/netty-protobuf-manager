@@ -11,7 +11,7 @@ import protobuf.JdssAuditor.DisplayData;
 public class ClientDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
 
   private final Logger logger = LoggerFactory.getLogger("client.ClientDataHandler");
- 
+
   private ChannelHandlerContext ctx;
 
   @Override

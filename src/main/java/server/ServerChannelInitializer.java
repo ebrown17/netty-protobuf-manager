@@ -13,13 +13,12 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
 
   private static final int WRITE_IDLE_TIME = 10;
 
-  public ServerChannelInitializer() {
-  }
+  public ServerChannelInitializer() {}
 
   @Override
   protected void initChannel(SocketChannel ch) throws Exception {
     ChannelPipeline p = ch.pipeline();
-    
+
     // TODO implement heartbeat protocol
     /*
      * p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));

@@ -10,26 +10,26 @@ import protobuf.ProtobufMessage;
 
 public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
 
-  private ChannelHandlerContext ctx;  
+  private ChannelHandlerContext ctx;
   private final Logger logger = LoggerFactory.getLogger("server.ServerDataHandler");
   private final static ProtobufMessage.ProtobufData heartbeat =
       ProtobufMessage.ProtobufData.newBuilder().setDataString("HeartBeat").build();
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, JdssAuditor.DisplayData msg) throws Exception {
-   logger.trace("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg.toString());
+    logger.trace("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg.toString());
 
   }
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    this.ctx = ctx;    
-    logger.info("channelActive remote peer: {} connected",ctx.channel().remoteAddress());
+    this.ctx = ctx;
+    logger.info("channelActive remote peer: {} connected", ctx.channel().remoteAddress());
   }
 
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-    logger.info("channelInactive remote peer: {} disconnected",ctx.channel().remoteAddress());
+    logger.info("channelInactive remote peer: {} disconnected", ctx.channel().remoteAddress());
   }
 
   public void sendheartBeat() {
@@ -38,11 +38,11 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
       ctx.writeAndFlush(heartbeat);
     }
   }
-  
+
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
     logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString());
-     ctx.close();
+    ctx.close();
   }
 
 }

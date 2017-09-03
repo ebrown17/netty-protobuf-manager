@@ -9,9 +9,9 @@ import server.Server;
 
 public class ServerTest {
   final static Logger logger = LoggerFactory.getLogger("server.test.java.server.ServerTest");
-  
+
   public static void main(String... args) {
-    
+
     try {
       logger.debug("Server Starting... ");
       InetSocketAddress socketAddress = new InetSocketAddress(6000);
@@ -19,7 +19,7 @@ public class ServerTest {
       Server server = new Server(socketAddress);
       server.configure();
       server.startServer();
-      // Thread.sleep(5000); 
+      // Thread.sleep(5000);
       // server.shutdownServer();
 
     } catch (Exception e) {

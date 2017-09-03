@@ -20,7 +20,8 @@ public class ServerHeartbeatHandler extends ChannelDuplexHandler {
       if (e.state() == IdleState.WRITER_IDLE) {
         handler = ctx.channel().pipeline().get(ServerDataHandler.class);
         handler.sendheartBeat();
-      } else if (e.state() == IdleState.READER_IDLE) {
+      }
+      else if (e.state() == IdleState.READER_IDLE) {
 
       }
     }

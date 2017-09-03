@@ -17,23 +17,19 @@ def defaultLogPattern = "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%msg%n"
 
 appender("ROLLING", RollingFileAppender) {
   file = "test.log"
-          
+
   rollingPolicy(TimeBasedRollingPolicy) {
-      fileNamePattern = "test-%d.log.gz"
-      maxHistory = 14
-      totalSizeCap = "5GB"
+    fileNamePattern = "test-%d.log.gz"
+    maxHistory = 14
+    totalSizeCap = "5GB"
   }
-  
-  encoder(PatternLayoutEncoder) {
-    pattern = defaultLogPattern
-  }
-  
+
+  encoder(PatternLayoutEncoder) { pattern = defaultLogPattern }
+
 }
 
 appender("STDOUT", ConsoleAppender) {
-	encoder(PatternLayoutEncoder) {
-	  pattern = defaultLogPattern
-	}
+  encoder(PatternLayoutEncoder) { pattern = defaultLogPattern }
 }
 
 appender("ASYNC",AsyncAppender){
@@ -45,7 +41,7 @@ appender("ASYNC",AsyncAppender){
 // Log will display all levels that are greater than set level
 // TRACE < DEBUG < INFO < WARN < ERROR < OFF
 
-// Log level for logger in these classes, will override root level if set, will duplicate logs if same appender is added 
+// Log level for logger in these classes, will override root level if set, will duplicate logs if same appender is added
 logger('io.netty',WARN)
 
 // Root log level for all logging

@@ -75,7 +75,7 @@ public class Server {
       channel.closeFuture().addListener(notNormalShutdown = new ChannelFutureListener() {
         @Override
         public void operationComplete(ChannelFuture future) throws Exception {
-          logger.info("startServer.closeFuture shutdownServer Not explicitly called {}",future.cause());
+          logger.info("startServer.closeFuture shutdownServer Not explicitly called {}", future.cause());
           channel.close();
         }
       });

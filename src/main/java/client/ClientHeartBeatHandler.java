@@ -35,14 +35,15 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
       if (e.state() == IdleState.READER_IDLE) {
 
         if (timeoutCount >= maxTimeouts) {
-          logger.info("userEventTriggered No heartbeat read for {} seconds. Closing Connection.",
-              maxTimeouts * 10);
+          logger.info("userEventTriggered No heartbeat read for {} seconds. Closing Connection.", maxTimeouts * 10);
           ctx.close();
-        } else {
-        //  handler.sendheartBeat();
+        }
+        else {
+          // handler.sendheartBeat();
           timeoutCount++;
         }
-      } else if (e.state() == IdleState.WRITER_IDLE) {
+      }
+      else if (e.state() == IdleState.WRITER_IDLE) {
 
       }
     }

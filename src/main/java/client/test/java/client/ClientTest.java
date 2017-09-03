@@ -14,7 +14,7 @@ import protobuf.JdssAuditor.DisplayData;
 import protobuf.JdssAuditor.DisplayData.Time;
 
 public class ClientTest {
-  
+
   final static Logger logger = LoggerFactory.getLogger("client.test.java.client.ClientTest");
 
   public static void main(String... args) {
@@ -27,15 +27,14 @@ public class ClientTest {
 
     for (int i = 0; i < 30; i++) {
       list.add(ccf.createClient("localhost", 6000));
-   
+
     }
 
     for (Client client : list) {
       try {
         client.connect();
-        //Thread.sleep(1000);
-      }
-      catch (InterruptedException e) {
+        // Thread.sleep(1000);
+      } catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -46,24 +45,26 @@ public class ClientTest {
     while (true) {
       try {
         count++;
-        if(list.isEmpty()) {break;}
-        
-        time = Time.newBuilder().setTime("TIME "+formatter.format(new Date()).toString()).build();
-        DisplayData displayData = DisplayData.newBuilder().setMessageType(DisplayData.AuditorMessageType.TIME).setTime(time).build();
+        if (list.isEmpty()) {
+          break;
+        }
+
+        time = Time.newBuilder().setTime("TIME " + formatter.format(new Date()).toString()).build();
+        DisplayData displayData =
+            DisplayData.newBuilder().setMessageType(DisplayData.AuditorMessageType.TIME).setTime(time).build();
         for (Client client : list) {
           client.sendData(displayData);
           Thread.sleep(100);
         }
 
 
-      /*  if ((count % 5) == 0) {
-          Client client = list.remove(0);
-          client.disconnect();
-          
-        }*/
+        /*
+         * if ((count % 5) == 0) { Client client = list.remove(0); client.disconnect();
+         * 
+         * }
+         */
 
-      }
-      catch (Exception es) {
+      } catch (Exception es) {
 
       }
 
