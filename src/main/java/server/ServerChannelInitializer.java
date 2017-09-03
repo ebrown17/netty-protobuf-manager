@@ -12,11 +12,9 @@ import protobuf.ProtobufMessage;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-  private Server server;
   private static final int WRITE_IDLE_TIME = 10;
 
-  public ServerChannelInitializer(Server server) {
-    this.server = server;
+  public ServerChannelInitializer() {
   }
 
   @Override
@@ -33,7 +31,7 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     p.addLast("protobufDecoder", new ProtobufDecoder(JdssAuditor.DisplayData.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
-    p.addLast(new ServerDataHandler(server));
+    p.addLast(new ServerDataHandler());
 
   }
 

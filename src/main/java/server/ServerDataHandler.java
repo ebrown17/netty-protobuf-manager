@@ -1,8 +1,5 @@
 package server;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,42 +10,30 @@ import protobuf.ProtobufMessage;
 
 public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
 
-  private ChannelHandlerContext ctx;
-  private Server server;
-  private ServerDataHandler handler;
-  private String clientAddress;
+  private ChannelHandlerContext ctx;  
   private final Logger logger = LoggerFactory.getLogger("server.ServerDataHandler");
   private final static ProtobufMessage.ProtobufData heartbeat =
       ProtobufMessage.ProtobufData.newBuilder().setDataString("HeartBeat").build();
 
-  public ServerDataHandler(Server server) {
-    this.server = server;
-  }
-
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, JdssAuditor.DisplayData msg) throws Exception {
-    logger.info("channelRead0 {} sent: {}", clientAddress, msg.toString());
+   logger.trace("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg.toString());
 
   }
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    this.ctx = ctx;
-    InetSocketAddress socketAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-    InetAddress inetaddress = socketAddress.getAddress();
-    clientAddress =
-        inetaddress.getHostName() == null ? ctx.channel().remoteAddress().toString() : inetaddress.getHostName();
-    logger.info("channelActive connection made from {}", clientAddress);
+    this.ctx = ctx;    
+    logger.info("channelActive remote peer: {} connected",ctx.channel().remoteAddress());
   }
 
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-    logger.info("channelInactive > connection to {} closed", clientAddress);
-
+    logger.info("channelInactive remote peer: {} disconnected",ctx.channel().remoteAddress());
   }
-
+  
   public void sendheartBeat() {
-    if (ctx.channel().isWritable()) {
+    if (ctx.channel().isActive() && ctx.channel().isWritable()) {
       logger.debug("sendheartBeat > sending... {} ", heartbeat);
       ctx.writeAndFlush(heartbeat);
     }
@@ -56,8 +41,8 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
   
   @Override
   public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    logger.warn("Exception in connection from {} cause {}", clientAddress, cause.toString());
-      ctx.close();
+    logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString());
+     ctx.close();
   }
 
 }
