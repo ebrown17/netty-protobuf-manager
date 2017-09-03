@@ -18,18 +18,15 @@ dependencies {
 	
 	
 	runtime files('config/logback.groovy')
+  
 }
 
-
 task asServer(type: JavaExec) {
-  classpath sourceSets.main.runtimeClasspath + files('config')
-  
-  main = "server.Server"
-  
+  classpath = sourceSets.main.runtimeClasspath + files('config')
+  main = "server.test.java.server.ServerTest"
 }
 
 task asClient(type: JavaExec) {
   classpath sourceSets.main.runtimeClasspath + files('config')
-  main = "Main"
-  
+  main = "client.test.java.client.ClientTest"
 }
