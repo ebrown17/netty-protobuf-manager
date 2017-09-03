@@ -1,5 +1,7 @@
 # Created by https://www.gitignore.io/api/cvs,gradle,eclipse
 
+!protobuf_files/*
+
 ### CVS ###
 /CVS/*
        **/CVS/*
