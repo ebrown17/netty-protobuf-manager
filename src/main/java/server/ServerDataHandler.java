@@ -31,7 +31,7 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     logger.info("channelInactive remote peer: {} disconnected",ctx.channel().remoteAddress());
   }
-  
+
   public void sendheartBeat() {
     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
       logger.debug("sendheartBeat > sending... {} ", heartbeat);

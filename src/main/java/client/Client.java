@@ -68,7 +68,7 @@ public class Client {
                 }
             }, calculateRetryTime(), TimeUnit.SECONDS);
         } else {
-            logger.info("connect Client connected to {} ", serverAddress.getHostString());
+            logger.info("connect Client connected to {} on port {}", serverAddress.getHostString(),serverAddress.getPort());
             retryCount = 0;
             disconnectIntiated = false;
             channel = channelFuture.channel();
