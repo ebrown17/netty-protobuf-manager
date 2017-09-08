@@ -29,6 +29,7 @@ public class Client {
   private static final long MAX_RETRY_TIME = 60L;
   private static final int MAX_RETRY_UNTIL_INCR = 30;
   private static final int TOTAL_MAX_RETRY_COUNT = 360;
+  private ChannelFutureListener connectionLostListener;
   private int retryCount = 0;
   private boolean disconnectIntiated = true;
 
@@ -44,54 +45,53 @@ public class Client {
   }
 
   public void connect() throws InterruptedException {
-
-    if (isActive()) {
-      logger.warn("connect already active don't create new connection ");
-      return;
-    }
-    ChannelFuture channelFuture = bootstrap.connect(serverAddress);
-    try {
-      channelFuture.await();
-    } catch (InterruptedException e) {
-      throw new RuntimeException("Interrupted trying to connect");
-    }
-    if (!channelFuture.isSuccess()) {
-      channelFuture.channel().eventLoop().schedule(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            connect();
-          } catch (InterruptedException e) {
-            // TODO test to see if this breaks it
-            throw new RuntimeException("Interrupted trying to connect");
-          }
-        }
-      }, calculateRetryTime(), TimeUnit.SECONDS);
-    }
-    else {
-      logger.info("connect Client connected to {} on port {}", serverAddress.getHostString(), serverAddress.getPort());
-      retryCount = 0;
-      disconnectIntiated = false;
-      channel = channelFuture.channel();
-      handler = channel.pipeline().get(ClientDataHandler.class);
-      // future to handle when client connection is lost
-      channel.closeFuture().addListener(new ChannelFutureListener() {
-        @Override
-        public void operationComplete(ChannelFuture future) throws Exception {
-
-          if (!disconnectIntiated) {
-            logger.warn("connect.closeFuture Client connection lost, initiating reconnect logic... ");
-            connect();
-          }
-          else {
-            channel.close();
-            logger.info("connect.closeFuture > Client fully diconnected");
-          }
-        }
-      });
-
-    }
-
+	  if (isActive()) {
+	      logger.warn("connect already active don't create new connection ");
+	      return;
+	    }
+	    ChannelFuture channelFuture = bootstrap.connect(serverAddress);
+	    
+	    channelFuture.addListener(new ChannelFutureListener() {
+	      @Override
+	      public void operationComplete(ChannelFuture future) throws Exception {
+	        if (!future.isSuccess()) {
+	          future.channel().close();
+	          future.channel().eventLoop().schedule(new Runnable() {
+	            @Override
+	            public void run() {
+	              try {
+	                connect();
+	              } catch (InterruptedException e) {
+	                // TODO test to see if this breaks it
+	                throw new RuntimeException("Interrupted trying to connect");
+	              }
+	            }
+	          }, calculateRetryTime(), TimeUnit.SECONDS);
+	        }
+	        else {
+	          logger.info("connect Client connected to {} ", serverAddress.getHostString());
+	          retryCount = 0;
+	          disconnectIntiated = false;
+	          channel = future.channel();
+	          handler = channel.pipeline().get(ClientDataHandler.class);
+	          // future to handle when client connection is lost
+	          connectionLostListener = new ChannelFutureListener() {
+	            @Override
+	            public void operationComplete(ChannelFuture future) throws Exception {
+	              if (!disconnectIntiated) {
+	                logger.warn("connect.closeFuture Client connection lost, initiating reconnect logic... ");
+	                connect();
+	              }
+	              else {
+	                channel.close().awaitUninterruptibly(1, TimeUnit.SECONDS);
+	                logger.info("connect.closeFuture > Client fully diconnected");
+	              }
+	            }
+	          };
+	          channel.closeFuture().addListener(connectionLostListener);
+	        }
+	      }
+	    });
   }
 
   public void disconnect() throws IOException {
