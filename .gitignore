@@ -1,7 +1,8 @@
 # Created by https://www.gitignore.io/api/cvs,gradle,eclipse
 
 !protobuf_files/protobuf_compiler/bin/*
-
+*.log
+*.log.*
 ### CVS ###
 /CVS/*
        **/CVS/*
