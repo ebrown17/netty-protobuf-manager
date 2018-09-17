@@ -2,27 +2,27 @@ package client;
 
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
-
-public class ClientConnectionListener implements ChannelFutureListener {
-
+public class ClientClosedListener implements ChannelFutureListener{
+  private final Logger logger = LoggerFactory.getLogger("client.ClientClosedListener");
   private Client client;
-  private boolean attemptingConnection = false;
-  
-  public ClientConnectionListener(Client client) {
+
+  public ClientClosedListener(Client client) {
     this.client = client;
   }
-
+  
   @Override
   public void operationComplete(ChannelFuture future) throws Exception {
-    if (future.isSuccess()) {
-      attemptingConnection = false;
-      client.connectionEstablished(future);
+    if(client.isDisconnectIntiated()) {
+      future.channel().close().awaitUninterruptibly(1, TimeUnit.SECONDS);
+      logger.info("connect.closeFuture > Client fully diconnected");
     }
     else {
-      future.channel().close();
       future.channel().eventLoop().schedule(() -> {
         try {
           client.connect();
@@ -34,15 +34,6 @@ public class ClientConnectionListener implements ChannelFutureListener {
 
       }, client.calculateRetryTime(), TimeUnit.SECONDS);
     }
-
-  }
-
-  protected void setAttemptingConnection(boolean attemptingConnection) {
-    this.attemptingConnection = attemptingConnection;
-  }
-
-  protected boolean isAttemptingConnection() {
-    return attemptingConnection;
   }
 
 }

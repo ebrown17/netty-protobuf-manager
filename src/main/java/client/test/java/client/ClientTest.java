@@ -24,8 +24,9 @@ public class ClientTest {
     ClientConnectionFactory ccf = new ClientConnectionFactory();
 
     List<Client> list = new ArrayList<Client>();
+    List<Client> remList = new ArrayList<Client>();
 
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 1; i++) {
       list.add(ccf.createClient("localhost", 6000));
 
     }
@@ -33,8 +34,9 @@ public class ClientTest {
     for (Client client : list) {
       try {
         client.connect();
-        // Thread.sleep(1000);
-      } catch (InterruptedException e) {
+         Thread.sleep(100);
+      }
+      catch (InterruptedException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
@@ -46,7 +48,11 @@ public class ClientTest {
       try {
         count++;
         if (list.isEmpty()) {
-          break;
+          list.addAll(remList);
+          for (Client client : list) {
+           client.connect();
+          }
+          remList.clear();
         }
 
         time = Time.newBuilder().setTime("TIME " + formatter.format(new Date()).toString()).build();
@@ -54,18 +60,21 @@ public class ClientTest {
             DisplayData.newBuilder().setMessageType(DisplayData.AuditorMessageType.TIME).setTime(time).build();
         for (Client client : list) {
           client.sendData(displayData);
-          Thread.sleep(100);
+          Thread.sleep(500);
         }
 
 
-        /*
-         * if ((count % 5) == 0) { Client client = list.remove(0); client.disconnect();
-         * 
-         * }
-         */
 
-      } catch (Exception es) {
+        if ((count % 5) == 0) {
+          Client client = list.remove(0);
+          client.disconnect();
+          remList.add(client);
+        }
 
+
+      }
+      catch (Exception es) {
+        logger.info("Exception with client:", es.getMessage() );
       }
 
     }
