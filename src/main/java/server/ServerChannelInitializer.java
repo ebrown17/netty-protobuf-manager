@@ -7,11 +7,12 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.timeout.IdleStateHandler;
 import protobuf.JdssAuditor;
 
 public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-  private static final int WRITE_IDLE_TIME = 10;
+  private static final int WRITE_IDLE_TIME = 5;
 
   public ServerChannelInitializer() {}
 
@@ -20,10 +21,9 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     ChannelPipeline p = ch.pipeline();
 
     // TODO implement heartbeat protocol
-    /*
-     * p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));
-     * p.addLast("heartBeatHandler", new ServerHeartbeatHandler());
-     */
+
+    p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));
+    p.addLast("heartBeatHandler", new ServerHeartbeatHandler());
 
     p.addLast("frameDecoder", new ProtobufVarint32FrameDecoder());
     p.addLast("protobufDecoder", new ProtobufDecoder(JdssAuditor.DisplayData.getDefaultInstance()));

@@ -14,38 +14,37 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
 
   private ClientDataHandler handler;
   private final Logger logger = LoggerFactory.getLogger("client.ClientHeartBeatHandler");
-  private int maxTimeouts, timeoutCount = 0;
+  private int missedLimit, timeoutCount = 0,expectedInterval;
 
-  /**
-   * 
-   * @param maxTimeouts Max amount of timeouts allowed between channel reads. Time limit is
-   *        specified in {@code IdleStateHandler}. If limit is reached; connection will be closed
-   *        and retry logic in {@code ClientDataHandler} channel inactive method is called.
-   */
-
-  public ClientHeartBeatHandler(int maxTimeouts, Channel channel) {
-    this.maxTimeouts = maxTimeouts;
-    this.handler = channel.pipeline().get(ClientDataHandler.class);
+/**
+ * 
+ * @param expectedInterval The expected heartbeat interval. This will be used to determine if server is no longer alive.
+ * @param missedLimit The max amount of heartbeats allowed until handler closes channel.
+ * @param channel The channel to monitor heartbeats on. Expecting server to send heartbeats; only checking reader.
+ */
+  public ClientHeartBeatHandler(int expectedInterval,int missedLimit, Channel channel) {
+    this.expectedInterval = expectedInterval;
+    this.missedLimit = missedLimit;
+    handler = channel.pipeline().get(ClientDataHandler.class);
   }
 
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+    logger.debug("userEventTriggered");
     if (evt instanceof IdleStateEvent) {
       IdleStateEvent e = (IdleStateEvent) evt;
+      logger.debug("userEventTriggered {}",e.state());
+      
       if (e.state() == IdleState.READER_IDLE) {
-
-        if (timeoutCount >= maxTimeouts) {
-          logger.info("userEventTriggered No heartbeat read for {} seconds. Closing Connection.", maxTimeouts * 10);
+        if (timeoutCount >= missedLimit) {
+          logger.info("userEventTriggered no heartbeat read for {} seconds. Closing Connection.", missedLimit * expectedInterval);
           ctx.close();
         }
         else {
-          // handler.sendheartBeat();
           timeoutCount++;
         }
       }
-      else if (e.state() == IdleState.WRITER_IDLE) {
-
-      }
+     
     }
   }
 

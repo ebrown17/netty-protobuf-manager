@@ -41,7 +41,16 @@ public class ClientTest {
         e.printStackTrace();
       }
     }
-    int count = 0;
+    
+    while(true) {
+      try {
+        Thread.sleep(30000L);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+  /*  int count = 0;
     SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
     Time time;
     while (true) {
@@ -79,7 +88,7 @@ public class ClientTest {
 
     }
 
-
+*/
   }
 
 }

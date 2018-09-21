@@ -34,7 +34,7 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
 
   public void sendheartBeat() {
     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
-      logger.debug("sendheartBeat > sending... {} ", heartbeat);
+      logger.debug("sendheartBeat");
       ctx.writeAndFlush(heartbeat);
     }
   }
