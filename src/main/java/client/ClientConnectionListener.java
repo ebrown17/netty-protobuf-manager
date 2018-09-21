@@ -9,7 +9,7 @@ import io.netty.channel.ChannelFutureListener;
 public class ClientConnectionListener implements ChannelFutureListener {
 
   private Client client;
-  private boolean attemptingConnection = false;
+  private boolean attemptingConnection = true;
   
   public ClientConnectionListener(Client client) {
     this.client = client;
@@ -18,13 +18,14 @@ public class ClientConnectionListener implements ChannelFutureListener {
   @Override
   public void operationComplete(ChannelFuture future) throws Exception {
     if (future.isSuccess()) {
-      attemptingConnection = false;
+      clearAttemptingConnection();
       client.connectionEstablished(future);
     }
     else {
       future.channel().close();
       future.channel().eventLoop().schedule(() -> {
         try {
+          clearAttemptingConnection();
           client.connect();
         }
         catch (InterruptedException e) {
@@ -37,8 +38,12 @@ public class ClientConnectionListener implements ChannelFutureListener {
 
   }
 
-  protected void setAttemptingConnection(boolean attemptingConnection) {
-    this.attemptingConnection = attemptingConnection;
+  protected void setAttemptingConnection() {
+    attemptingConnection = true;
+  }
+
+  protected void clearAttemptingConnection() {
+    attemptingConnection = false;
   }
 
   protected boolean isAttemptingConnection() {

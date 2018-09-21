@@ -60,12 +60,12 @@ public class ClientTest {
             DisplayData.newBuilder().setMessageType(DisplayData.AuditorMessageType.TIME).setTime(time).build();
         for (Client client : list) {
           client.sendData(displayData);
-          Thread.sleep(500);
+          Thread.sleep(1500);
         }
 
 
 
-        if ((count % 5) == 0) {
+        if ((count % 15) == 0) {
           Client client = list.remove(0);
           client.disconnect();
           remList.add(client);

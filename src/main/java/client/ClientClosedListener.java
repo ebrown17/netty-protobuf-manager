@@ -18,7 +18,7 @@ public class ClientClosedListener implements ChannelFutureListener{
   
   @Override
   public void operationComplete(ChannelFuture future) throws Exception {
-    if(client.isDisconnectIntiated()) {
+    if(client.isDisconnectInitiated()) {
       future.channel().close().awaitUninterruptibly(1, TimeUnit.SECONDS);
       logger.info("connect.closeFuture > Client fully diconnected");
     }

@@ -33,7 +33,7 @@ public class Client {
   private ClientConnectionListener retryistener;
   private ClientClosedListener closedListener;
   private int retryCount = 0;
-  private boolean disconnectIntiated = true;
+  private boolean disconnectInitiated = true;
 
   public Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup) {
     this.serverAddress = serverAddress;
@@ -55,19 +55,23 @@ public class Client {
       logger.warn("connect connection attempt already in progress ");
       return;
     }
+    if(retryistener == null){
+      logger.info("connect creating new connection listener");
+      retryistener = new ClientConnectionListener(this);
+    }
+
     ChannelFuture channelFuture = bootstrap.connect(serverAddress);
-    retryistener = new ClientConnectionListener(this);
-    retryistener.setAttemptingConnection(true);
+    retryistener.setAttemptingConnection();
     channelFuture.addListener(retryistener);
   }
 
   public void disconnect() throws IOException {
     if (channel == null || !isActive()) {
-      logger.info("disconnect disconnect called when connection already closed");
+      logger.info("disconnect disconnect called when connection not active or channel null");
       return;
     }
     channel.closeFuture().removeListener(closedListener);
-    disconnectIntiated = true;
+    disconnectInitiated = true;
     logger.info("disconnect disconnect explicitly called");
     channel.close().awaitUninterruptibly(1, TimeUnit.SECONDS);
 
@@ -76,7 +80,7 @@ public class Client {
   protected void connectionEstablished(ChannelFuture future) {
     logger.info("connectionEstablished Client connected to {} ", serverAddress.getHostString());
     retryCount = 0;
-    disconnectIntiated = false;
+    disconnectInitiated = false;
     channel = future.channel();
     handler = channel.pipeline().get(ClientDataHandler.class);
     // future to handle when client connection is lost or closed
@@ -110,8 +114,8 @@ public class Client {
     return channel;
   }
 
-  protected boolean isDisconnectIntiated() {
-    return disconnectIntiated;
+  protected boolean isDisconnectInitiated() {
+    return disconnectInitiated;
   }
 
   public boolean isActive() {
