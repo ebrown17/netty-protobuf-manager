@@ -33,6 +33,7 @@ public class Client {
   private ClientConnectionListener retryistener;
   private ClientClosedListener closedListener;
   private int retryCount = 0;
+  private long initialRetryTime = 0;
   private boolean disconnectInitiated = true;
 
   public Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup) {
@@ -48,11 +49,11 @@ public class Client {
 
   public void connect() throws InterruptedException {
     if (isActive()) {
-      logger.warn("connect already active don't create new connection ");
+      logger.warn("connect called while connection already active");
       return;
     }
     if(retryistener != null && retryistener.isAttemptingConnection()) {
-      logger.warn("connect connection attempt already in progress ");
+      logger.warn("connect called while connection attempt already in progress");
       return;
     }
     if(retryistener == null){
@@ -67,7 +68,7 @@ public class Client {
 
   public void disconnect() throws IOException {
     if (channel == null || !isActive()) {
-      logger.info("disconnect disconnect called when connection not active or channel null");
+      logger.info("disconnect called when connection not active or channel null");
       return;
     }
     channel.closeFuture().removeListener(closedListener);
@@ -80,6 +81,7 @@ public class Client {
   protected void connectionEstablished(ChannelFuture future) {
     logger.info("connectionEstablished Client connected to {} ", serverAddress.getHostString());
     retryCount = 0;
+    initialRetryTime = 0;
     disconnectInitiated = false;
     channel = future.channel();
     handler = channel.pipeline().get(ClientDataHandler.class);
@@ -92,20 +94,28 @@ public class Client {
    * @return Will return the time in milliseconds. Returns the
    *         {@code RETRY_TIME} for the specified {@code retryCount}. After
    *         this limit is reached it will then only return the time specified
-   *         with {@code MAX_RETRY_TIME}
+   *         with {@code MAX_RETRY_TIME}. 
    */
   protected long calculateRetryTime() {
-    if (retryCount >= MAX_RETRY_UNTIL_INCR) {
-      logger.debug("calculateRetryTime {}>={} setting {} as retry interval: total time retrying {} seconds", retryCount,
-          MAX_RETRY_UNTIL_INCR, MAX_RETRY_TIME,
-          ((retryCount - MAX_RETRY_UNTIL_INCR) * MAX_RETRY_TIME) + (MAX_RETRY_UNTIL_INCR * RETRY_TIME));
+    long retryTime = System.currentTimeMillis() - initialRetryTime;
+    
+    if(retryTime>= 10000L) {
       retryCount++;
+    }
+    if(initialRetryTime==0) {
+      initialRetryTime = retryTime;
+      retryTime = 0;
+    }
+    
+    if (retryCount >= MAX_RETRY_UNTIL_INCR) {
+      logger.debug("calculateRetryTime {} >= {} setting {} as retry interval: total time retrying {} seconds", retryCount,
+          MAX_RETRY_UNTIL_INCR, MAX_RETRY_TIME,
+          retryTime/1000L);
       return MAX_RETRY_TIME;
     }
     else {
-      logger.debug("calculateRetryTime {}<{} setting {} seconds as retry interval: total time retrying {} seconds",
-          retryCount, MAX_RETRY_UNTIL_INCR, RETRY_TIME, RETRY_TIME * retryCount);
-      retryCount++;
+      logger.debug("calculateRetryTime {} < {} setting {} seconds as retry interval: total time retrying {} seconds",
+          retryCount, MAX_RETRY_UNTIL_INCR, RETRY_TIME,  retryTime/1000L);
       return RETRY_TIME;
     }
   }
