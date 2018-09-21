@@ -2,14 +2,12 @@ package client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import protobuf.JdssAuditor;
 import protobuf.JdssAuditor.DisplayData;
-import server.ServerDataHandler;
 
-public class ClientDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
+public class ClientDataHandler extends SimpleChannelInboundHandler<Message> {
 
   private final Logger logger = LoggerFactory.getLogger("client.ClientDataHandler");
 
@@ -17,8 +15,11 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
   private ClientHeartBeatHandler heatBeatHandler;
   
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, JdssAuditor.DisplayData msg) throws Exception {
-    logger.debug("channelRead0 {} sent {}",ctx.channel().remoteAddress(),msg.toString());
+  protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
+   
+    DisplayData test = ((DisplayData.class.cast(msg)) );
+    logger.debug("channelRead0 recieved {} from {}",test.getMessageType(),ctx.channel().remoteAddress());
+    
     heatBeatHandler.resetTimeoutCounter();
   }
 
@@ -34,7 +35,7 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
     logger.debug("channelInactive ");
   }
 
-  public void sendData(DisplayData displayData) {
+  public void sendData(Message displayData) {
     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
       ctx.writeAndFlush(displayData);
     }

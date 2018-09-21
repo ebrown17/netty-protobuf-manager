@@ -7,18 +7,21 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import protobuf.JdssAuditor;
 import protobuf.ProtobufMessage;
+import protobuf.JdssAuditor.DisplayData;
+import protobuf.JdssAuditor.DisplayData.HeartBeat;
 
-public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.DisplayData> {
+public class ServerDataHandler extends SimpleChannelInboundHandler<DisplayData> {
 
   private ChannelHandlerContext ctx;
   private final Logger logger = LoggerFactory.getLogger("server.ServerDataHandler");
   private final static ProtobufMessage.ProtobufData heartbeat =
       ProtobufMessage.ProtobufData.newBuilder().setDataString("HeartBeat").build();
+  private final static DisplayData heartBeat =
+      DisplayData.newBuilder().setMessageType(DisplayData.AuditorMessageType.HEARTBEAT).setHearBeat(HeartBeat.newBuilder().setTime("heartbeat")).build();
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, JdssAuditor.DisplayData msg) throws Exception {
-    logger.trace("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg.toString());
-
+  protected void channelRead0(ChannelHandlerContext ctx, DisplayData msg) throws Exception {
+    logger.info("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg.toString());
   }
 
   @Override
@@ -30,13 +33,6 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<JdssAuditor.D
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     logger.info("channelInactive remote peer: {} disconnected", ctx.channel().remoteAddress());
-  }
-
-  public void sendheartBeat() {
-    if (ctx.channel().isActive() && ctx.channel().isWritable()) {
-      logger.debug("sendheartBeat");
-      ctx.writeAndFlush(heartbeat);
-    }
   }
 
   @Override

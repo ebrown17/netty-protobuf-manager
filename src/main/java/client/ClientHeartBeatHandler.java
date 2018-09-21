@@ -2,8 +2,6 @@ package client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import client.ClientDataHandler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -12,7 +10,6 @@ import io.netty.handler.timeout.IdleStateEvent;
 
 public class ClientHeartBeatHandler extends ChannelDuplexHandler {
 
-  private ClientDataHandler handler;
   private final Logger logger = LoggerFactory.getLogger("client.ClientHeartBeatHandler");
   private int missedLimit, timeoutCount = 0,expectedInterval;
 
@@ -25,7 +22,6 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
   public ClientHeartBeatHandler(int expectedInterval,int missedLimit, Channel channel) {
     this.expectedInterval = expectedInterval;
     this.missedLimit = missedLimit;
-    handler = channel.pipeline().get(ClientDataHandler.class);
   }
 
   @Override
@@ -33,7 +29,7 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
     logger.debug("userEventTriggered");
     if (evt instanceof IdleStateEvent) {
       IdleStateEvent e = (IdleStateEvent) evt;
-      logger.debug("userEventTriggered {}",e.state());
+      logger.debug("userEventTriggered {} miss count {}",e.state(),timeoutCount);
       
       if (e.state() == IdleState.READER_IDLE) {
         if (timeoutCount >= missedLimit) {
@@ -44,7 +40,6 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
           timeoutCount++;
         }
       }
-     
     }
   }
 
