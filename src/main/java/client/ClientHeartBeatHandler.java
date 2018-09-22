@@ -7,19 +7,23 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import protobuf.ProtobufDefaultMessages.DefaultMessages;
+import protobuf.ProtobufDefaultMessages.DefaultMessages.MessageType;
 
 public class ClientHeartBeatHandler extends ChannelDuplexHandler {
 
   private final Logger logger = LoggerFactory.getLogger("client.ClientHeartBeatHandler");
-  private int missedLimit, timeoutCount = 0,expectedInterval;
+  private int missedLimit, timeoutCount = 0, expectedInterval;
 
-/**
- * 
- * @param expectedInterval The expected heartbeat interval. This will be used to determine if server is no longer alive.
- * @param missedLimit The max amount of heartbeats allowed until handler closes channel.
- * @param channel The channel to monitor heartbeats on. Expecting server to send heartbeats; only checking reader.
- */
-  public ClientHeartBeatHandler(int expectedInterval,int missedLimit, Channel channel) {
+  /**
+   * 
+   * @param expectedInterval The expected heartbeat interval. This will be used to determine if server
+   *        is no longer alive.
+   * @param missedLimit The max amount of heartbeats allowed until handler closes channel.
+   * @param channel The channel to monitor heartbeats on. Expecting server to send heartbeats; only
+   *        checking reader.
+   */
+  public ClientHeartBeatHandler(int expectedInterval, int missedLimit, Channel channel) {
     this.expectedInterval = expectedInterval;
     this.missedLimit = missedLimit;
   }
@@ -29,11 +33,12 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
     logger.debug("userEventTriggered");
     if (evt instanceof IdleStateEvent) {
       IdleStateEvent e = (IdleStateEvent) evt;
-      logger.debug("userEventTriggered {} miss count {}",e.state(),timeoutCount);
-      
+      logger.debug("userEventTriggered {} miss count {}", e.state(), timeoutCount);
+
       if (e.state() == IdleState.READER_IDLE) {
         if (timeoutCount >= missedLimit) {
-          logger.info("userEventTriggered no heartbeat read for {} seconds. Closing Connection.", missedLimit * expectedInterval);
+          logger.info("userEventTriggered no heartbeat read for {} seconds. Closing Connection.",
+              missedLimit * expectedInterval);
           ctx.close();
         }
         else {
@@ -43,7 +48,18 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
     }
   }
 
-  public void resetTimeoutCounter() {
+  @Override
+  public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    DefaultMessages message = ((DefaultMessages) msg);
+    logger.debug("channelRead recieved {} from {}", message.getMessageType(), ctx.channel().remoteAddress());
+    if (MessageType.HEARTBEAT == message.getMessageType()) {
+      resetTimeoutCounter();
+    }else {
+      ctx.fireChannelRead(msg);
+    }
+  }
+
+  protected void resetTimeoutCounter() {
     timeoutCount = 0;
   }
 }

@@ -5,29 +5,34 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import protobuf.JdssAuditor.DisplayData;
+import protobuf.ProtobufDefaultMessages.DefaultMessages;
+import protobuf.ProtobufDefaultMessages.DefaultMessages.MessageType;
 
 public class ClientDataHandler extends SimpleChannelInboundHandler<Message> {
 
   private final Logger logger = LoggerFactory.getLogger("client.ClientDataHandler");
 
   private ChannelHandlerContext ctx;
-  private ClientHeartBeatHandler heatBeatHandler;
-  
+
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
-   
-    DisplayData test = ((DisplayData.class.cast(msg)) );
-    logger.debug("channelRead0 recieved {} from {}",test.getMessageType(),ctx.channel().remoteAddress());
-    
-    heatBeatHandler.resetTimeoutCounter();
+    DefaultMessages message = ((DefaultMessages) msg);
+    logger.debug("channelRead0 recieved {} from {}", message.getMessageType(), ctx.channel().remoteAddress());
+    if (MessageType.DEFAULT_MESSAGE == message.getMessageType()) {
+      
+    }
+   /* else if(MessageType.STATUS == message.getMessageType() ) {
+      
+    }*/
+    else {
+      ctx.fireChannelRead(msg);
+    }
   }
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
     logger.debug("channelActive ");
     this.ctx = ctx;
-    heatBeatHandler = ctx.channel().pipeline().get(ClientHeartBeatHandler.class);
   }
 
   @Override

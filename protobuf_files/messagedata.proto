@@ -2,11 +2,38 @@ syntax = "proto3";
 
 package protobuf.MessageData;
 
-option java_package="protobuf";
-option java_outer_classname = "ProtobufMessage";
+import "google/protobuf/timestamp.proto";
 
-message ProtobufData {
-    string dataString = 1;
-    int32  dataNumber = 2;
+option java_package="protobuf";
+option java_outer_classname = "ProtobufDefaultMessages";
+
+message DefaultMessages {
+
+	MessageType messageType = 1;
+	HeartBeat heartbeat = 2;
+	Status status = 3;
+	DefaultMessage defaultMessage = 4;
+
+   	enum MessageType {
+        UNKNOWN = 0;
+        HEARTBEAT = 1;
+        STATUS = 3;
+        DEFAULT_MESSAGE = 4;
+    } 
+    
+    message HeartBeat {
+        google.protobuf.Timestamp date = 1;
+    }
+    
+    message Status {
+        string health = 1;
+        int32 uptime = 2;
+        int32 errors = 3;
+    }
+    
+    message DefaultMessage {
+         string data = 1;
+         map<string, string> dataMap = 2;
+    }
     
 }
