@@ -11,11 +11,10 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import protobuf.JdssAuditor.DisplayData;
+import protobuf.ProtoMessages.ProtoMessage;
 
 public class Client {
   private final Logger logger = LoggerFactory.getLogger("client.Client");
@@ -132,12 +131,12 @@ public class Client {
     return (channel != null && (channel.isOpen() || channel.isActive()));
   }
 
-  public void sendData(DisplayData displayData) {
+  public void sendData(ProtoMessage message) {
     if (!isActive()) {
       logger.warn("sendData can't send data on null or closed channel");
       return;
     }
-    logger.trace("sendData {} to remote host", displayData.toString(), channel.remoteAddress());
-    handler.sendData(displayData);
+    logger.trace("sendData {} to remote host", message.toString(), channel.remoteAddress());
+    handler.sendData(message);
   }
 }

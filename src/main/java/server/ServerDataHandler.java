@@ -16,7 +16,7 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<Message> {
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
-    logger.info("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg.toString());
+    logger.info("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg);
     
   }
 

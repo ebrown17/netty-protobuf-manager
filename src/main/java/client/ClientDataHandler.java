@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import protobuf.ProtobufDefaultMessages.DefaultMessages;
-import protobuf.ProtobufDefaultMessages.DefaultMessages.MessageType;
+import protobuf.ProtoMessages.ProtoMessage;
+import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 public class ClientDataHandler extends SimpleChannelInboundHandler<Message> {
 
@@ -16,14 +16,14 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<Message> {
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
-    DefaultMessages message = ((DefaultMessages) msg);
-    logger.debug("channelRead0 recieved {} from {}", message.getMessageType(), ctx.channel().remoteAddress());
+    ProtoMessage message = ((ProtoMessage) msg);
+    logger.trace("channelRead0 recieved {} from {}", message.getMessageType(), ctx.channel().remoteAddress());
     if (MessageType.DEFAULT_MESSAGE == message.getMessageType()) {
-      
+      logger.debug("channelRead0 {} ", message);
     }
-   /* else if(MessageType.STATUS == message.getMessageType() ) {
-      
-    }*/
+    else if(MessageType.STATUS == message.getMessageType() ) {
+      logger.debug("channelRead0 {} ", message);
+    }
     else {
       ctx.fireChannelRead(msg);
     }
@@ -31,7 +31,7 @@ public class ClientDataHandler extends SimpleChannelInboundHandler<Message> {
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    logger.debug("channelActive ");
+    logger.debug("channelActive");
     this.ctx = ctx;
   }
 

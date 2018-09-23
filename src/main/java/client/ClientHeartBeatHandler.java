@@ -7,8 +7,8 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import protobuf.ProtobufDefaultMessages.DefaultMessages;
-import protobuf.ProtobufDefaultMessages.DefaultMessages.MessageType;
+import protobuf.ProtoMessages.ProtoMessage;
+import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 public class ClientHeartBeatHandler extends ChannelDuplexHandler {
 
@@ -16,6 +16,13 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
   private int missedLimit, timeoutCount = 0, expectedInterval;
 
   /**
+   * ClientHeartBeatHandler expects the server to be be sending a heartbeat message.
+   * <p>
+   * {@link ClientChannelInitializer}
+   * specifies the expected heartbeat interval and amount of times a client can miss a heartbeat
+   * message.
+   * <p>
+   * If the heartbeat miss interval is missed the channel is closed and the client's reconnect logic is started.
    * 
    * @param expectedInterval The expected heartbeat interval. This will be used to determine if server
    *        is no longer alive.
@@ -50,11 +57,12 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
 
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    DefaultMessages message = ((DefaultMessages) msg);
+    ProtoMessage message = ((ProtoMessage) msg);
     logger.debug("channelRead recieved {} from {}", message.getMessageType(), ctx.channel().remoteAddress());
     if (MessageType.HEARTBEAT == message.getMessageType()) {
       resetTimeoutCounter();
-    }else {
+    }
+    else {
       ctx.fireChannelRead(msg);
     }
   }
