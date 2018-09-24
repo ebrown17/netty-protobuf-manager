@@ -1,4 +1,4 @@
-package server.test.java.server;
+package src.test.java.server;
 
 import java.net.InetSocketAddress;
 

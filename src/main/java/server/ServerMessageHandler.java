@@ -7,15 +7,16 @@ import com.google.protobuf.Message;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import protobuf.ProtoMessages.ProtoMessage;
 
 
-public class ServerDataHandler extends SimpleChannelInboundHandler<Message> {
+public class ServerMessageHandler extends SimpleChannelInboundHandler<ProtoMessage> {
 
   private ChannelHandlerContext ctx;
-  private final Logger logger = LoggerFactory.getLogger("server.ServerDataHandler");
+  private final Logger logger = LoggerFactory.getLogger(ServerMessageHandler.class);
 
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, Message msg) throws Exception {
+  protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage msg) throws Exception {
     logger.info("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg);
     
   }
@@ -29,12 +30,6 @@ public class ServerDataHandler extends SimpleChannelInboundHandler<Message> {
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     logger.info("channelInactive remote peer: {} disconnected", ctx.channel().remoteAddress());
-  }
-
-  @Override
-  public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-    logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString());
-    ctx.close();
   }
 
 }

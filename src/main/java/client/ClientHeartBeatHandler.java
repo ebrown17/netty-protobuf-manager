@@ -12,17 +12,17 @@ import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 public class ClientHeartBeatHandler extends ChannelDuplexHandler {
 
-  private final Logger logger = LoggerFactory.getLogger("client.ClientHeartBeatHandler");
-  private int missedLimit, timeoutCount = 0, expectedInterval;
+  private final Logger logger = LoggerFactory.getLogger(ClientHeartBeatHandler.class);
+  private int missedLimit, missCount = 0, expectedInterval;
 
   /**
    * ClientHeartBeatHandler expects the server to be be sending a heartbeat message.
    * <p>
-   * {@link ClientChannelInitializer}
-   * specifies the expected heartbeat interval and amount of times a client can miss a heartbeat
-   * message.
+   * If the heartbeat miss limit is reached the channel is closed and the client's reconnect logic is
+   * started.
    * <p>
-   * If the heartbeat miss interval is missed the channel is closed and the client's reconnect logic is started.
+   * By default only a heartbeat read will reset the miss count. The method
+   * {@link ClientHeartBeatHandler#resetMissCounter() resetMissCounter } can be called on any read.
    * 
    * @param expectedInterval The expected heartbeat interval. This will be used to determine if server
    *        is no longer alive.
@@ -40,16 +40,16 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
     logger.debug("userEventTriggered");
     if (evt instanceof IdleStateEvent) {
       IdleStateEvent e = (IdleStateEvent) evt;
-      logger.debug("userEventTriggered {} miss count {}", e.state(), timeoutCount);
+      logger.debug("userEventTriggered {} miss count {}", e.state(), missCount);
 
       if (e.state() == IdleState.READER_IDLE) {
-        if (timeoutCount >= missedLimit) {
+        if (missCount >= missedLimit) {
           logger.info("userEventTriggered no heartbeat read for {} seconds. Closing Connection.",
               missedLimit * expectedInterval);
           ctx.close();
         }
         else {
-          timeoutCount++;
+          missCount++;
         }
       }
     }
@@ -60,14 +60,16 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
     ProtoMessage message = ((ProtoMessage) msg);
     logger.debug("channelRead recieved {} from {}", message.getMessageType(), ctx.channel().remoteAddress());
     if (MessageType.HEARTBEAT == message.getMessageType()) {
-      resetTimeoutCounter();
+      resetMissCounter();
     }
     else {
       ctx.fireChannelRead(msg);
     }
   }
-
-  protected void resetTimeoutCounter() {
-    timeoutCount = 0;
+/**
+ * Sets the heartbeat miss counter to zero.
+ */
+  protected void resetMissCounter() {
+    missCount = 0;
   }
 }

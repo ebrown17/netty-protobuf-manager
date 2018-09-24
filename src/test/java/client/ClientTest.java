@@ -1,4 +1,4 @@
-package client.test.java.client;
+package src.test.java.client;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class ClientTest {
     List<Client> list = new ArrayList<Client>();
     List<Client> remList = new ArrayList<Client>();
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 5; i++) {
       list.add(ccf.createClient("localhost", 6000));
 
     }
@@ -72,8 +72,8 @@ public class ClientTest {
         ProtoMessage data= ProtoMessage.newBuilder().setMessageType(MessageType.STATUS).setStatus(status).build();
         
         for (Client client : list) {
-          client.sendData(data);
-          Thread.sleep(200);
+          client.sendMessage(data);
+          Thread.sleep(1000);
         }
 
 

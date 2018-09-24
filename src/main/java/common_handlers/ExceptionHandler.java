@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import protobuf.ProtoMessages.ProtoMessage;
 
 public class ExceptionHandler extends ChannelDuplexHandler {
-  private final Logger logger = LoggerFactory.getLogger("common_handlers.ExceptionHandler");
+  private final Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
 
   @Override
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

@@ -17,12 +17,12 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import protobuf.ProtoMessages.ProtoMessage;
 
 public class Client {
-  private final Logger logger = LoggerFactory.getLogger("client.Client");
+  private final Logger logger = LoggerFactory.getLogger(Client.class);
 
   private InetSocketAddress serverAddress;
   private Bootstrap bootstrap;
   private Channel channel;
-  private ClientDataHandler handler;
+  private ClientMessageHandler messageHandler;
 
   private static final long RETRY_TIME = 10L;
   private static final long MAX_RETRY_TIME = 60L;
@@ -83,7 +83,7 @@ public class Client {
     initialRetryTime = 0;
     disconnectInitiated = false;
     channel = future.channel();
-    handler = channel.pipeline().get(ClientDataHandler.class);
+    messageHandler = channel.pipeline().get(ClientMessageHandler.class);
     // future to handle when client connection is lost or closed
     closedListener = new ClientClosedListener(this);
     channel.closeFuture().addListener(closedListener);
@@ -98,7 +98,7 @@ public class Client {
   protected long calculateRetryTime() {
     long retryTime = System.currentTimeMillis() - initialRetryTime;
     
-    if(retryTime>= 10000L) {
+    if(retryTime>= RETRY_TIME * 1000) {
       retryCount++;
     }
     if(initialRetryTime==0) {
@@ -131,12 +131,12 @@ public class Client {
     return (channel != null && (channel.isOpen() || channel.isActive()));
   }
 
-  public void sendData(ProtoMessage message) {
+  public void sendMessage(ProtoMessage message) {
     if (!isActive()) {
       logger.warn("sendData can't send data on null or closed channel");
       return;
     }
     logger.trace("sendData {} to remote host", message.toString(), channel.remoteAddress());
-    handler.sendData(message);
+    messageHandler.sendData(message);
   }
 }

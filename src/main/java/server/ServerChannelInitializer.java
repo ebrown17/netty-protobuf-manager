@@ -1,5 +1,6 @@
 package server;
 
+import common_handlers.ExceptionHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -23,9 +24,10 @@ public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> 
     p.addLast("protobufDecoder", new ProtobufDecoder(ProtoMessage.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
+    p.addLast(new ServerMessageHandler());
     p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));
     p.addLast("heartBeatHandler", new ServerHeartbeatHandler());
-    p.addLast(new ServerDataHandler());
+    p.addLast(new ExceptionHandler());
   }
 
 }

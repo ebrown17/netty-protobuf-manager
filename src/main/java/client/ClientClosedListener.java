@@ -9,7 +9,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
 public class ClientClosedListener implements ChannelFutureListener{
-  private final Logger logger = LoggerFactory.getLogger("client.ClientClosedListener");
+  private final Logger logger = LoggerFactory.getLogger(ClientClosedListener.class);
   private Client client;
 
   public ClientClosedListener(Client client) {
@@ -31,7 +31,6 @@ public class ClientClosedListener implements ChannelFutureListener{
           // TODO test to see what happens if this is reached
           throw new RuntimeException("Interrupted trying to connect");
         }
-
       }, client.calculateRetryTime(), TimeUnit.SECONDS);
     }
   }

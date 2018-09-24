@@ -18,7 +18,7 @@ import protobuf.ProtoMessages.ProtoMessage.Status;
 
 public class ServerHeartbeatHandler extends ChannelDuplexHandler {
 
-  private final Logger logger = LoggerFactory.getLogger("server.ServerHeartbeatHandler");
+  private final Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
     if (evt instanceof IdleStateEvent) {

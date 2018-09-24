@@ -23,11 +23,11 @@ dependencies {
 }
 
 task asServer(type: JavaExec) {
-  classpath = sourceSets.main.runtimeClasspath + files('config')
-  main = "server.test.java.server.ServerTest"
+  classpath = sourceSets.test.runtimeClasspath + files('config')
+  main = "src.test.java.server.ServerTest"
 }
 
 task asClient(type: JavaExec) {
-  classpath sourceSets.main.runtimeClasspath + files('config')
-  main = "client.test.java.client.ClientTest"
+  classpath sourceSets.test.runtimeClasspath + files('config')
+  main = "src.test.java.client.ClientTest"
 }
