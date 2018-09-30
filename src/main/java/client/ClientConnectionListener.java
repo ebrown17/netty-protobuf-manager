@@ -30,9 +30,8 @@ public class ClientConnectionListener implements ChannelFutureListener {
         }
         catch (InterruptedException e) {
           // TODO test to see what happens if this is reached
-          throw new RuntimeException("Interrupted trying to connect");
+          throw new RuntimeException("ClientConnectionListener interrupted while trying to connect");
         }
-
       }, client.calculateRetryTime(), TimeUnit.SECONDS);
     }
 
@@ -42,7 +41,7 @@ public class ClientConnectionListener implements ChannelFutureListener {
     attemptingConnection = true;
   }
 
-  protected void clearAttemptingConnection() {
+  private void clearAttemptingConnection() {
     attemptingConnection = false;
   }
 

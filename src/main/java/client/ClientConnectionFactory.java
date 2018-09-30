@@ -14,7 +14,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 
 public class ClientConnectionFactory {
 
-  private final Logger logger = LoggerFactory.getLogger("client.ClientConnectionFactory");
+  private final Logger logger = LoggerFactory.getLogger(ClientConnectionFactory.class);
 
   private EventLoopGroup workerGroup;
   private Class<? extends Channel> channelClass;

@@ -26,7 +26,7 @@ public class Server {
   private Channel channel;
   private InetSocketAddress socketAddress;
   private ChannelFutureListener notNormalShutdown;
-  private final Logger logger = LoggerFactory.getLogger("server.ServerListener");
+  private final Logger logger = LoggerFactory.getLogger(Server.class);
 
   public Server(InetSocketAddress socketAddress) {
     this.socketAddress = socketAddress;
@@ -34,9 +34,9 @@ public class Server {
 
   public void configure() {
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
-    // 0 forces netty to use default number of threads which is max number of processors * 2
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
     // the workerGroup will be used for processing all channels
+    // 0 forces netty to use default number of threads which is max number of processors * 2
     bossGroup = new NioEventLoopGroup(1, threadFactory);
     workerGroup = new NioEventLoopGroup(0, threadFactory);
 
@@ -61,7 +61,8 @@ public class Server {
 
     try {
       channelFuture.await();
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new RuntimeException("Interrupted waiting for bind");
     }
     if (!channelFuture.isSuccess()) {

@@ -1,4 +1,4 @@
-package client.test.java.client;
+package src.test.java.client;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -12,6 +12,9 @@ import client.Client;
 import client.ClientConnectionFactory;
 import protobuf.JdssAuditor.DisplayData;
 import protobuf.JdssAuditor.DisplayData.Time;
+import protobuf.ProtoMessages.ProtoMessage;
+import protobuf.ProtoMessages.ProtoMessage.MessageType;
+import protobuf.ProtoMessages.ProtoMessage.Status;
 
 public class ClientTest {
 
@@ -26,7 +29,7 @@ public class ClientTest {
     List<Client> list = new ArrayList<Client>();
     List<Client> remList = new ArrayList<Client>();
 
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 5; i++) {
       list.add(ccf.createClient("localhost", 6000));
 
     }
@@ -41,6 +44,15 @@ public class ClientTest {
         e.printStackTrace();
       }
     }
+/*    
+    while(true) {
+      try {
+        Thread.sleep(30000L);
+      } catch (InterruptedException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }*/
     int count = 0;
     SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
     Time time;
@@ -55,17 +67,18 @@ public class ClientTest {
           remList.clear();
         }
 
-        time = Time.newBuilder().setTime("TIME " + formatter.format(new Date()).toString()).build();
-        DisplayData displayData =
-            DisplayData.newBuilder().setMessageType(DisplayData.AuditorMessageType.TIME).setTime(time).build();
+        Status status = Status.newBuilder().setHealth("GOOD").setErrors(5).setUptime(100).build();
+        
+        ProtoMessage data= ProtoMessage.newBuilder().setMessageType(MessageType.STATUS).setStatus(status).build();
+        
         for (Client client : list) {
-          client.sendData(displayData);
-          Thread.sleep(1500);
+          client.sendMessage(data);
+          Thread.sleep(1000);
         }
 
 
 
-        if ((count % 15) == 0) {
+        if ((count % 5) == 0) {
           Client client = list.remove(0);
           client.disconnect();
           remList.add(client);

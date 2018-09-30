@@ -17,7 +17,8 @@ message DisplayData {
     ScrollInfo scrollInfo = 8;
     Time time = 9;
     Info info = 10;
-    OutOfService outOfService = 11;    
+    OutOfService outOfService = 11;
+    HeartBeat hearBeat = 12;
     
     enum AuditorMessageType {
         UNKNOWN = 0;
@@ -30,6 +31,7 @@ message DisplayData {
         TIME = 7;
         INFO = 8;
         OUT_OF_SERVICE = 9;
+        HEARTBEAT = 10;
     } 
     message BoardingAdvice {
         string advice = 1;
@@ -65,6 +67,9 @@ message DisplayData {
         int32 length = 2;
         int32 eta1 = 3;
         int32 eta2 = 4;
+    }
+    message HeartBeat {
+        string time = 1;
     }   
     
 }
