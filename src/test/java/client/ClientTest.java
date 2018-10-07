@@ -1,4 +1,4 @@
-package src.test.java.client;
+package client;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
