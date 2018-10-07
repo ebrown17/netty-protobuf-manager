@@ -24,13 +24,12 @@ public class ClientChannelInitializer extends ChannelInitializer<SocketChannel> 
     p.addLast("protobufDecoder", new ProtobufDecoder(ProtoMessage.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
-    
+
     p.addLast(new ClientMessageHandler());
-    
+
     p.addLast("idleStateHandler", new IdleStateHandler(READ_IDLE_TIME, 0, 0));
-    p.addLast("heartBeatHandler", new ClientHeartBeatHandler(READ_IDLE_TIME,HEARTBEAT_MISS_LIMIT, p.channel()));
+    p.addLast("heartBeatHandler", new ClientHeartBeatHandler(READ_IDLE_TIME, HEARTBEAT_MISS_LIMIT, p.channel()));
+
     p.addLast(new ExceptionHandler());
-
   }
-
 }

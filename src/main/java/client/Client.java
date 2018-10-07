@@ -27,7 +27,7 @@ public class Client {
   private static final long RETRY_TIME = 10L;
   private static final long MAX_RETRY_TIME = 60L;
   private static final int MAX_RETRY_UNTIL_INCR = 30;
-  //TODO probably never want to stop retry; so this could be removed
+  // TODO probably never want to stop retry; so this could be removed
   private static final int TOTAL_MAX_RETRY_COUNT = 360;
   private ClientConnectionListener retryistener;
   private ClientClosedListener closedListener;
@@ -51,11 +51,11 @@ public class Client {
       logger.warn("connect called while connection already active");
       return;
     }
-    if(retryistener != null && retryistener.isAttemptingConnection()) {
+    if (retryistener != null && retryistener.isAttemptingConnection()) {
       logger.warn("connect called while connection attempt already in progress");
       return;
     }
-    if(retryistener == null){
+    if (retryistener == null) {
       logger.info("connect creating new connection listener");
       retryistener = new ClientConnectionListener(this);
     }
@@ -74,7 +74,6 @@ public class Client {
     disconnectInitiated = true;
     logger.info("disconnect disconnect explicitly called");
     channel.close().awaitUninterruptibly(1, TimeUnit.SECONDS);
-
   }
 
   protected void connectionEstablished(ChannelFuture future) {
@@ -90,31 +89,37 @@ public class Client {
   }
 
   /**
-   * @return Will return the time in milliseconds. Returns the
-   *         {@code RETRY_TIME} for the specified {@code retryCount}. After
-   *         this limit is reached it will then only return the time specified
-   *         with {@code MAX_RETRY_TIME}. 
+   * @return Will return the time in milliseconds. Returns the {@code RETRY_TIME} for the specified
+   * {@code retryCount}. After this limit is reached it will then only return the time specified
+   * with {@code MAX_RETRY_TIME}.
    */
   protected long calculateRetryTime() {
     long retryTime = System.currentTimeMillis() - initialRetryTime;
-    
-    if(retryTime>= RETRY_TIME * 1000) {
+
+    if (retryTime >= RETRY_TIME * 1000) {
       retryCount++;
     }
-    if(initialRetryTime==0) {
+    if (initialRetryTime == 0) {
       initialRetryTime = retryTime;
       retryTime = 0;
     }
-    
+
     if (retryCount >= MAX_RETRY_UNTIL_INCR) {
-      logger.debug("calculateRetryTime {} >= {} setting {} as retry interval: total time retrying {} seconds", retryCount,
-          MAX_RETRY_UNTIL_INCR, MAX_RETRY_TIME,
-          retryTime/1000L);
+      logger.debug(
+          "calculateRetryTime {} >= {} setting {} as retry interval: total time retrying {} seconds",
+          retryCount,
+          MAX_RETRY_UNTIL_INCR,
+          MAX_RETRY_TIME,
+          retryTime / 1000L);
       return MAX_RETRY_TIME;
     }
     else {
-      logger.debug("calculateRetryTime {} < {} setting {} seconds as retry interval: total time retrying {} seconds",
-          retryCount, MAX_RETRY_UNTIL_INCR, RETRY_TIME,  retryTime/1000L);
+      logger.debug(
+          "calculateRetryTime {} < {} setting {} seconds as retry interval: total time retrying {} seconds",
+          retryCount,
+          MAX_RETRY_UNTIL_INCR,
+          RETRY_TIME,
+          retryTime / 1000L);
       return RETRY_TIME;
     }
   }

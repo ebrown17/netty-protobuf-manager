@@ -23,12 +23,12 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
    * <p>
    * By default only a heartbeat read will reset the miss count. The method
    * {@link ClientHeartBeatHandler#resetMissCounter() resetMissCounter } can be called on any read.
-   * 
+   *
    * @param expectedInterval The expected heartbeat interval. This will be used to determine if server
-   *        is no longer alive.
-   * @param missedLimit The max amount of heartbeats allowed until handler closes channel.
-   * @param channel The channel to monitor heartbeats on. Expecting server to send heartbeats; only
-   *        checking reader.
+   *                         is no longer alive.
+   * @param missedLimit      The max amount of heartbeats allowed until handler closes channel.
+   * @param channel          The channel to monitor heartbeats on. Expecting server to send heartbeats; only
+   *                         checking reader.
    */
   public ClientHeartBeatHandler(int expectedInterval, int missedLimit, Channel channel) {
     this.expectedInterval = expectedInterval;
@@ -66,9 +66,10 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
       ctx.fireChannelRead(msg);
     }
   }
-/**
- * Sets the heartbeat miss counter to zero.
- */
+
+  /**
+   * Sets the heartbeat miss counter to zero.
+   */
   protected void resetMissCounter() {
     missCount = 0;
   }

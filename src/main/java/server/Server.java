@@ -67,18 +67,14 @@ public class Server {
     }
     if (!channelFuture.isSuccess()) {
       logger.error("startServer Server failed to bind to port {} ", port);
-      return;
     }
     else {
       logger.debug("startServer Server listening for connections... ");
       channel = channelFuture.channel();
 
-      channel.closeFuture().addListener(notNormalShutdown = new ChannelFutureListener() {
-        @Override
-        public void operationComplete(ChannelFuture future) throws Exception {
-          logger.info("startServer.closeFuture shutdownServer Not explicitly called {}", future.cause());
-          channel.close();
-        }
+      channel.closeFuture().addListener(notNormalShutdown = future -> {
+        logger.info("startServer.closeFuture shutdownServer Not explicitly called {}", future.cause());
+        channel.close();
       });
     }
   }
@@ -93,16 +89,13 @@ public class Server {
 
     channel.closeFuture().removeListener(notNormalShutdown);
 
-    channel.close().addListener(new ChannelFutureListener() {
-      @Override
-      public void operationComplete(ChannelFuture future) throws Exception {
-        if (!future.isSuccess()) {
-          logger.warn("shutdownServer Server shutdown error {}", future.cause());
-        }
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
-        logger.info("shutdownServer server fully shutdown");
+    channel.close().addListener((ChannelFutureListener) future -> {
+      if (!future.isSuccess()) {
+        logger.warn("shutdownServer Server shutdown error {}", future.cause());
       }
+      bossGroup.shutdownGracefully();
+      workerGroup.shutdownGracefully();
+      logger.info("shutdownServer server fully shutdown");
     });
 
   }

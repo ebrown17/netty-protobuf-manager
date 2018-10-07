@@ -8,17 +8,17 @@ import org.slf4j.LoggerFactory;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 
-public class ClientClosedListener implements ChannelFutureListener{
+public class ClientClosedListener implements ChannelFutureListener {
   private final Logger logger = LoggerFactory.getLogger(ClientClosedListener.class);
   private Client client;
 
   public ClientClosedListener(Client client) {
     this.client = client;
   }
-  
+
   @Override
   public void operationComplete(ChannelFuture future) throws Exception {
-    if(client.isDisconnectInitiated()) {
+    if (client.isDisconnectInitiated()) {
       future.channel().close().awaitUninterruptibly(1, TimeUnit.SECONDS);
       logger.info("connect.closeFuture > Client fully diconnected");
     }

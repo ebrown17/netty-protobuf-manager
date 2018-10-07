@@ -19,6 +19,7 @@ import protobuf.ProtoMessages.ProtoMessage.Status;
 public class ServerHeartbeatHandler extends ChannelDuplexHandler {
 
   private final Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);
+
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
     if (evt instanceof IdleStateEvent) {
@@ -26,7 +27,7 @@ public class ServerHeartbeatHandler extends ChannelDuplexHandler {
       if (e.state() == IdleState.WRITER_IDLE) {
         if (ctx.channel().isActive() && ctx.channel().isWritable()) {
           logger.debug("userEventTriggered sendheartBeat");
-            ctx.writeAndFlush(generateHeartBeat());
+          ctx.writeAndFlush(generateHeartBeat());
         }
       }
     }
@@ -36,7 +37,7 @@ public class ServerHeartbeatHandler extends ChannelDuplexHandler {
     Status status = Status.newBuilder().setHealth("GOOD").setErrors(5).setUptime(100).build();
     return ProtoMessage.newBuilder().setMessageType(MessageType.STATUS).setStatus(status).build();
   }*/
-  
+
   private ProtoMessage generateHeartBeat() {
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(new Date().getTime()).build();
     HeartBeat heartbeat = HeartBeat.newBuilder().setDate(timestamp).build();

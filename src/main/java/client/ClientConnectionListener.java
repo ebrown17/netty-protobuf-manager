@@ -10,7 +10,7 @@ public class ClientConnectionListener implements ChannelFutureListener {
 
   private Client client;
   private boolean attemptingConnection = true;
-  
+
   public ClientConnectionListener(Client client) {
     this.client = client;
   }

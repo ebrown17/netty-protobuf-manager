@@ -18,7 +18,7 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<ProtoMessa
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage msg) throws Exception {
     logger.info("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg);
-    
+
   }
 
   @Override
