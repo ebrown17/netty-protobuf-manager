@@ -40,7 +40,7 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<ProtoMessa
     logger.debug("channelInactive ");
   }
 
-  public void sendData(ProtoMessage message) {
+  public void sendMessage(ProtoMessage message) {
     if (ctx.channel().isActive() && ctx.channel().isWritable()) {
       ctx.writeAndFlush(message);
     }

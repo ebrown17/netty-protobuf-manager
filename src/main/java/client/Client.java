@@ -142,6 +142,6 @@ public class Client {
       return;
     }
     logger.trace("sendData {} to remote host", message.toString(), channel.remoteAddress());
-    messageHandler.sendData(message);
+    messageHandler.sendMessage(message);
   }
 }
