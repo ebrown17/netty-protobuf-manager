@@ -17,7 +17,6 @@ public class ServerTest {
       InetSocketAddress socketAddress = new InetSocketAddress(6000);
 
       Server server = new Server(socketAddress);
-      server.configure();
       server.startServer();
       // Thread.sleep(5000);
       // server.shutdownServer();
