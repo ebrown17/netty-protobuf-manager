@@ -10,7 +10,7 @@ import server.Server;
 public class ServerTest {
   final static Logger logger = LoggerFactory.getLogger("server.test.java.server.ServerTest");
 
-  public static void main(String... args) {
+  public static void main(String... args) {/*
 
     try {
       logger.debug("Server Starting... ");
@@ -23,7 +23,7 @@ public class ServerTest {
 
     } catch (Exception e) {
       e.printStackTrace();
-    }
+    }*/
 
   }
 

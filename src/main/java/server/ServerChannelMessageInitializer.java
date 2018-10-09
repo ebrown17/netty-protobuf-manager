@@ -12,7 +12,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import protobuf.ProtoMessages.ProtoMessage;
 
 
-public class ServerChannelInitializer extends ChannelInitializer<SocketChannel> {
+public class ServerChannelMessageInitializer extends ChannelInitializer<SocketChannel> {
 
   private static final int WRITE_IDLE_TIME = 5;
 
