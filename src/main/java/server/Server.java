@@ -21,13 +21,13 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 
 public class Server {
 
-  private int port;
+  private boolean allActive;
   private EventLoopGroup bossGroup;
   private EventLoopGroup workerGroup;
   private ServerBootstrap bootstrap;
-  private ChannelFutureListener closeListener;
   private HashMap<Integer, Channel> channelMap = new HashMap<Integer, Channel>();
-  private HashMap<Integer, InetSocketAddress> sockMap;
+  private HashMap<Integer, ArrayList<ChannelFutureListener>> channelListenerMap = new HashMap<Integer, ArrayList<ChannelFutureListener>>(5);
+  private HashMap<Integer, InetSocketAddress> portAddressMap = new HashMap<Integer, InetSocketAddress>(5);
 
   private final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -53,14 +53,12 @@ public class Server {
   }
 
   public <T extends ChannelInitializer<SocketChannel>> void addChannel(int port, Class<T> channelInitializer) {
-    if (sockMap == null) {
-      sockMap = new HashMap<Integer, InetSocketAddress>(5);
-    }
+
     try {
-      if (sockMap.get(port) == null) {
+      if (portAddressMap.get(port) == null) {
         ChannelInitializer<SocketChannel> channelInit = channelInitializer.newInstance();
         InetSocketAddress sockAddr = new InetSocketAddress(port);
-        sockMap.put(port, sockAddr);
+        portAddressMap.put(port, sockAddr);
         bootstrap.childHandler(channelInit);
       }
       else {
@@ -70,16 +68,14 @@ public class Server {
     catch (Exception e) {
       logger.error("addChannel {}", e.getMessage());
     }
-
-
   }
 
-  public void startServer() {
-
-    sockMap.forEach((port, socketAddress) -> {
+  public void startChannel(int port) {
+    InetSocketAddress socketAddress = portAddressMap.get(port);
+    if (socketAddress != null) {
 
       if (isActive(port)) {
-        logger.warn("startServer already active don't try to bind to port again ");
+        logger.warn("startChannel called or an already active channel: {}", port);
         return;
       }
 
@@ -92,61 +88,70 @@ public class Server {
         throw new RuntimeException("Interrupted waiting for bind");
       }
       if (!channelFuture.isSuccess()) {
-        logger.error("startServer Server failed to bind to port {} ", port);
+        logger.error("startChannel failed to bind to port {} ", port);
       }
       else {
-        logger.debug("startServer Server listening for connections... ");
+        logger.debug("startChannel now listening for connections on port {}", port);
         Channel channel = channelFuture.channel();
 
-        channel.closeFuture().addListener(future -> {
-          logger.info("channel {} shutdown not explicitly called, channel closed with {}", port, future.cause());
+        ChannelFutureListener closeListener = future -> {
+          logger.info("channel {} closed unexpectedly, closed with {}", port, future.cause());
           channel.close();
-        });
+        };
+
+        ArrayList<ChannelFutureListener> listenerList = channelListenerMap.get(port);
+        if (listenerList == null) {
+          listenerList = new ArrayList<ChannelFutureListener>(5);
+        }
+        listenerList.add(closeListener);
+
+        channel.closeFuture().addListener(closeListener);
 
         channelMap.put(port, channel);
+        channelListenerMap.put(port, listenerList);
+      }
+    }
+    else {
+      logger.error("startChannel called with unconfigured port: {}", port);
+    }
+  }
+
+  //TODO
+  public void closeChannel(int port) {
+    Channel channel = channelMap.get(port);
+    if (channel != null) {
+      if (!isActive(channel)) {
+        logger.info("closeChannel called on already closed channel {}", port);
+        return;
       }
 
-    });
+      channelListenerMap.get(port).forEach(listener -> channel.closeFuture().removeListener(listener));
+
+      channel.close().addListener(future -> {
+        if (!future.isSuccess()) {
+          logger.warn("closeChannel channel {} error {}", port, future.cause());
+        }
+        logger.info("closeChannel channel {} now closed", port);
+      });
+    }
+    else {
+      logger.warn("closeChannel called with null channel {}", port);
+    }
 
   }
 
-  //TODO
-  public void startChannel() {
-  }
-
-  //TODO
-  public void stopChannel() {
+  public void startServer() {
+    portAddressMap.keySet().stream().forEach((port) -> startChannel(port));
   }
 
   public void shutdownServer() {
     logger.info("shutdownServer explicitly called Shutting down server ");
 
-    channelMap.forEach((port,channel)->{
-      if (!isActive(port)) {
-        logger.info("shutdownServer channel {} already shutdown ",port);
-        // return in lamba only stops current iteration
-        return;
-      }
-      //TODO
-      channel.closeFuture().removeListener(ChannelFutureListener.class);
-
-      channel.close().addListener(future -> {
-        if (!future.isSuccess()) {
-          logger.warn("shutdownServer channel {} shutdown error {}",port, future.cause());
-        }
-        logger.info("shutdownServer channel {} fully shutdown",port);
-      });
-
-    });
+    channelMap.keySet().stream().forEach((port) -> closeChannel(port));
 
     bossGroup.shutdownGracefully();
     workerGroup.shutdownGracefully();
     logger.info("shutdownServer server fully shutdown");
-
-
-
-
-
   }
 
   public boolean isActive(int port) {
@@ -154,17 +159,19 @@ public class Server {
     return (channel != null && (channel.isOpen() || channel.isActive()));
   }
 
+  public boolean isActive(Channel channel) {
+    return (channel != null && (channel.isOpen() || channel.isActive()));
+  }
+
   public boolean allActive() {
 
-    boolean allActive = true;
+    allActive = true;
 
-    for (Map.Entry<Integer, Channel> entry : channelMap.entrySet()) {
-      Integer key = entry.getKey();
-      Channel channel = entry.getValue();
-      if (channel == null && (!channel.isOpen() || !channel.isActive())) {
+    channelMap.values().stream().forEach(channel -> {
+      if (channel == null || (!channel.isOpen() || !channel.isActive())) {
         allActive = false;
       }
-    }
+    });
 
     return allActive;
   }
@@ -177,7 +184,18 @@ public class Server {
 
     Server server = new Server();
     server.addChannel(6000, ServerChannelMessageInitializer.class);
+    server.addChannel(6001, ServerChannelMessageInitializer.class);
     server.startServer();
+
+    try {
+      Thread.sleep(5000);
+    }
+    catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    server.closeChannel(6001);
+    LoggerFactory.getLogger("main").info("all active {}",server.allActive());
 
   }
 
