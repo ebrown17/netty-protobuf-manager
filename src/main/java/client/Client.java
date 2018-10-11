@@ -65,17 +65,6 @@ public class Client {
     channelFuture.addListener(retryistener);
   }
 
-  public void disconnect() throws IOException {
-    if (channel == null || !isActive()) {
-      logger.info("disconnect called when connection not active or channel null");
-      return;
-    }
-    channel.closeFuture().removeListener(closedListener);
-    disconnectInitiated = true;
-    logger.info("disconnect disconnect explicitly called");
-    channel.close().awaitUninterruptibly(1, TimeUnit.SECONDS);
-  }
-
   protected void connectionEstablished(ChannelFuture future) {
     logger.info("connectionEstablished Client connected to {} ", serverAddress.getHostString());
     retryCount = 0;
@@ -86,6 +75,17 @@ public class Client {
     // future to handle when client connection is lost or closed
     closedListener = new ClientClosedListener(this);
     channel.closeFuture().addListener(closedListener);
+  }
+
+  public void disconnect() throws IOException {
+    if (channel == null || !isActive()) {
+      logger.info("disconnect called when connection not active or channel null");
+      return;
+    }
+    channel.closeFuture().removeListener(closedListener);
+    disconnectInitiated = true;
+    logger.info("disconnect disconnect explicitly called");
+    channel.close().awaitUninterruptibly(1, TimeUnit.SECONDS);
   }
 
   /**
