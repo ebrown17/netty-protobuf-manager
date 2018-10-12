@@ -1,23 +1,19 @@
 package server;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ThreadFactory;
-
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.DefaultThreadFactory;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadFactory;
 
 public class Server {
 
@@ -25,9 +21,10 @@ public class Server {
   private EventLoopGroup bossGroup;
   private EventLoopGroup workerGroup;
   private ServerBootstrap bootstrap;
-  private HashMap<Integer, Channel> channelMap = new HashMap<Integer, Channel>();
-  private HashMap<Integer, ArrayList<ChannelFutureListener>> channelListenerMap = new HashMap<Integer, ArrayList<ChannelFutureListener>>(5);
-  private HashMap<Integer, InetSocketAddress> portAddressMap = new HashMap<Integer, InetSocketAddress>(5);
+  private static final int INITIAL_CHANNEL_LIMIT = 5;
+  private ConcurrentHashMap<Integer, Channel> channelMap = new ConcurrentHashMap<Integer, Channel>(INITIAL_CHANNEL_LIMIT);
+  private ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>> channelListenerMap = new ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>>(INITIAL_CHANNEL_LIMIT);
+  private ConcurrentHashMap<Integer, InetSocketAddress> portAddressMap = new ConcurrentHashMap<Integer, InetSocketAddress>(INITIAL_CHANNEL_LIMIT);
 
   private final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -36,7 +33,6 @@ public class Server {
   }
 
   private void configure() {
-
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
     // the workerGroup will be used for processing all channels
@@ -53,7 +49,6 @@ public class Server {
   }
 
   public <T extends ChannelInitializer<SocketChannel>> void addChannel(int port, Class<T> channelInitializer) {
-
     try {
       if (portAddressMap.get(port) == null) {
         ChannelInitializer<SocketChannel> channelInit = channelInitializer.newInstance();
@@ -101,7 +96,7 @@ public class Server {
 
         ArrayList<ChannelFutureListener> listenerList = channelListenerMap.get(port);
         if (listenerList == null) {
-          listenerList = new ArrayList<ChannelFutureListener>(5);
+          listenerList = new ArrayList<ChannelFutureListener>(INITIAL_CHANNEL_LIMIT);
         }
         listenerList.add(closeListener);
 
@@ -116,7 +111,6 @@ public class Server {
     }
   }
 
-  //TODO
   public void closeChannel(int port) {
     Channel channel = channelMap.get(port);
     if (channel != null) {
@@ -125,13 +119,20 @@ public class Server {
         return;
       }
 
-      channelListenerMap.get(port).forEach(listener -> channel.closeFuture().removeListener(listener));
+      for (ChannelFutureListener listener : channelListenerMap.get(port)) {
+        channel.closeFuture().removeListener(listener);
+      }
 
       channel.close().addListener(future -> {
         if (!future.isSuccess()) {
           logger.warn("closeChannel channel {} error {}", port, future.cause());
         }
+        channelMap.remove(port);
+        channelListenerMap.remove(port);
+        portAddressMap.remove(port);
+
         logger.info("closeChannel channel {} now closed", port);
+
       });
     }
     else {
@@ -141,13 +142,17 @@ public class Server {
   }
 
   public void startServer() {
-    portAddressMap.keySet().stream().forEach((port) -> startChannel(port));
+    for (Integer port : portAddressMap.keySet()) {
+      startChannel(port);
+    }
   }
 
   public void shutdownServer() {
     logger.info("shutdownServer explicitly called Shutting down server ");
 
-    channelMap.keySet().stream().forEach((port) -> closeChannel(port));
+    for (Integer port : channelMap.keySet()) {
+      closeChannel(port);
+    }
 
     bossGroup.shutdownGracefully();
     workerGroup.shutdownGracefully();
@@ -164,15 +169,13 @@ public class Server {
   }
 
   public boolean allActive() {
-
     allActive = true;
 
-    channelMap.values().stream().forEach(channel -> {
+    for (Channel channel : channelMap.values()) {
       if (channel == null || (!channel.isOpen() || !channel.isActive())) {
         allActive = false;
       }
-    });
-
+    }
     return allActive;
   }
 
@@ -189,13 +192,16 @@ public class Server {
 
     try {
       Thread.sleep(5000);
+      server.closeChannel(6001);
+      Thread.sleep(1000);
+      LoggerFactory.getLogger("main").info("all active {} channels",server.allActive());
+      server.shutdownServer();
     }
     catch (InterruptedException e) {
       e.printStackTrace();
     }
 
-    server.closeChannel(6001);
-    LoggerFactory.getLogger("main").info("all active {}",server.allActive());
+
 
   }
 
