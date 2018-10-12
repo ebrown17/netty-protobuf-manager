@@ -3,7 +3,7 @@ apply plugin: 'application'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
 
-mainClassName = "Main"
+mainClassName = "server.Server"
 
 
 repositories { mavenCentral() }
@@ -15,12 +15,13 @@ dependencies {
   compile 'org.slf4j:slf4j-api:1.7.25'
   compile 'ch.qos.logback:logback-classic:1.2.3'
 
+  /*runtime files('config/logback.groovy')*/
 
-  runtime files('config/logback.groovy')
-  
   testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
   
 }
+
+
 
 task asServer(type: JavaExec) {
   classpath = sourceSets.test.runtimeClasspath + files('config')
