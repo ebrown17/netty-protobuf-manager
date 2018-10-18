@@ -1,12 +1,12 @@
 package client;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
@@ -28,7 +28,7 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
    *                         is no longer alive.
    * @param missedLimit      The max amount of heartbeats allowed until handler closes channel.
    * @param channel          The channel to monitor heartbeats on. Expecting server to send heartbeats; only
-   *                         checking reader.
+   *                         monitors channel read events.
    */
   public ClientHeartBeatHandler(int expectedInterval, int missedLimit, Channel channel) {
     this.expectedInterval = expectedInterval;
