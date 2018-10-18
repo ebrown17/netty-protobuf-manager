@@ -1,12 +1,9 @@
 package server;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.protobuf.Message;
-
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 
 
@@ -23,13 +20,23 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<ProtoMessa
 
   @Override
   public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    this.ctx = ctx;
     logger.info("channelActive remote peer: {} connected", ctx.channel().remoteAddress());
+    this.ctx = ctx;
   }
 
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     logger.info("channelInactive remote peer: {} disconnected", ctx.channel().remoteAddress());
   }
+
+  public void sendMessage(ProtoMessage message){
+    if (ctx.channel().isActive() && ctx.channel().isWritable()) {
+      ctx.writeAndFlush(message);
+    }
+    else{
+      logger.trace("sendMessage called when channel not active or writable");
+    }
+  }
+
 
 }

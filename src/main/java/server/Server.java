@@ -17,14 +17,13 @@ import java.util.concurrent.ThreadFactory;
 
 public class Server {
 
-  private boolean allActive;
   private EventLoopGroup bossGroup;
   private EventLoopGroup workerGroup;
   private ServerBootstrap bootstrap;
   private static final int INITIAL_CHANNEL_LIMIT = 5;
-  private ConcurrentHashMap<Integer, Channel> channelMap = new ConcurrentHashMap<Integer, Channel>(INITIAL_CHANNEL_LIMIT);
-  private ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>> channelListenerMap = new ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>>(INITIAL_CHANNEL_LIMIT);
-  private ConcurrentHashMap<Integer, InetSocketAddress> portAddressMap = new ConcurrentHashMap<Integer, InetSocketAddress>(INITIAL_CHANNEL_LIMIT);
+  private ConcurrentHashMap<Integer, Channel> channelMap;
+  private ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>> channelListenerMap;
+  private ConcurrentHashMap<Integer, InetSocketAddress> portAddressMap;
 
   private final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -33,6 +32,10 @@ public class Server {
   }
 
   private void configure() {
+    channelMap = new ConcurrentHashMap<Integer, Channel>(INITIAL_CHANNEL_LIMIT);
+    channelListenerMap = new ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>>(INITIAL_CHANNEL_LIMIT);
+    portAddressMap = new ConcurrentHashMap<Integer, InetSocketAddress>(INITIAL_CHANNEL_LIMIT);
+
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
     // the workerGroup will be used for processing all channels
@@ -169,7 +172,7 @@ public class Server {
   }
 
   public boolean allActive() {
-    allActive = true;
+    boolean allActive = true;
 
     for (Channel channel : channelMap.values()) {
       if (channel == null || (!channel.isOpen() || !channel.isActive())) {
@@ -186,25 +189,20 @@ public class Server {
   public static void main(String... args) {
 
     Server server = new Server();
-    server.addChannel(6000, ServerChannelMessageInitializer.class);
-    server.addChannel(6001, ServerChannelMessageInitializer.class);
+    server.addChannel(6000, ServerMessageChannel.class);
+    server.addChannel(6001, ServerMessageChannel.class);
     server.startServer();
 
     try {
       Thread.sleep(5000);
       server.closeChannel(6001);
-      Thread.sleep(1000);
-      LoggerFactory.getLogger("main").info("all active {} channels",server.allActive());
+      Thread.sleep(10000);
+      LoggerFactory.getLogger("main").info("all active {} channels", server.allActive());
       server.shutdownServer();
     }
     catch (InterruptedException e) {
       e.printStackTrace();
     }
-
-
-
   }
-
-
 }
 
