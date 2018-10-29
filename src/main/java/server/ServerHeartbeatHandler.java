@@ -1,20 +1,17 @@
 package server;
 
-import java.util.Date;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.protobuf.Timestamp;
-
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.HeartBeat;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
-import protobuf.ProtoMessages.ProtoMessage.Status;
+
+import java.util.Date;
 
 public class ServerHeartbeatHandler extends ChannelDuplexHandler {
 
@@ -32,11 +29,6 @@ public class ServerHeartbeatHandler extends ChannelDuplexHandler {
       }
     }
   }
-
-/*  private ProtoMessage generateStatusMessage() {
-    Status status = Status.newBuilder().setHealth("GOOD").setErrors(5).setUptime(100).build();
-    return ProtoMessage.newBuilder().setMessageType(MessageType.STATUS).setStatus(status).build();
-  }*/
 
   private ProtoMessage generateHeartBeat() {
     Timestamp timestamp = Timestamp.newBuilder().setSeconds(new Date().getTime()).build();

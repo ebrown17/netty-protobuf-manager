@@ -28,7 +28,6 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<ProtoMessa
   protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage msg) throws Exception {
     logger.trace("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg);
     transceiver.handleMessage(remoteAddress,msg);
-
   }
 
   @Override
@@ -42,11 +41,11 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<ProtoMessa
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     logger.trace("channelInactive remote peer: {} disconnected", ctx.channel().remoteAddress());
-    transceiver.registerHandlerInActive(remoteAddress,this);
+    transceiver.registerHandlerInActive(remoteAddress,handlerId);
   }
 
   public void sendMessage(ProtoMessage message){
-    if (ctx.channel().isActive() && ctx.channel().isWritable()) {
+    if (ctx != null && ctx.channel().isActive() && ctx.channel().isWritable()) {
       ctx.writeAndFlush(message);
     }
     else{
