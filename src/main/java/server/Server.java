@@ -196,7 +196,7 @@ public class Server {
     try {
       Thread.sleep(5000);
       server.closeChannel(6001);
-      Thread.sleep(30000);
+      Thread.sleep(450000);
       LoggerFactory.getLogger("main").info("all active {} channels", server.allActive());
       server.shutdownServer();
     }

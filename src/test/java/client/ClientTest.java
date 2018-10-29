@@ -1,20 +1,15 @@
 package client;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import client.Client;
-import client.ClientConnectionFactory;
-import protobuf.JdssAuditor.DisplayData;
 import protobuf.JdssAuditor.DisplayData.Time;
 import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
 import protobuf.ProtoMessages.ProtoMessage.Status;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientTest {
 
@@ -29,7 +24,7 @@ public class ClientTest {
     List<Client> list = new ArrayList<Client>();
     List<Client> remList = new ArrayList<Client>();
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 1; i++) {
       list.add(ccf.createClient("localhost", 6000));
 
     }
@@ -78,11 +73,13 @@ public class ClientTest {
 
 
 
-        if ((count % 5) == 0) {
+/*
+        if ((count % 15) == 0) {
           Client client = list.remove(0);
           client.disconnect();
           remList.add(client);
         }
+*/
 
 
       }
