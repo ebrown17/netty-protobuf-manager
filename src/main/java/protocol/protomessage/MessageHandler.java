@@ -1,31 +1,30 @@
-package server;
+package protocol.protomessage;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages.ProtoMessage;
+import protobuf.ProtoMessages;
 import transceiver.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 
-public class ServerMessageHandler extends SimpleChannelInboundHandler<ProtoMessage> {
+public class MessageHandler extends SimpleChannelInboundHandler<ProtoMessages.ProtoMessage> {
 
   private ChannelHandlerContext ctx;
-  private final Logger logger = LoggerFactory.getLogger(ServerMessageHandler.class);
+  private final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
   private InetSocketAddress remoteAddress;
   private final MessageTransceiver transceiver;
   private final Long handlerId;
 
-  ServerMessageHandler(Long id,MessageTransceiver transceiver){
+  public MessageHandler(Long id,MessageTransceiver transceiver){
     this.handlerId = id;
     this.transceiver = transceiver;
     transceiver.registerHandler(handlerId,this);
   }
 
-
   @Override
-  protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage msg) throws Exception {
+  protected void channelRead0(ChannelHandlerContext ctx, ProtoMessages.ProtoMessage msg) throws Exception {
     logger.trace("channelRead0 {} sent: {}", ctx.channel().remoteAddress(), msg);
     transceiver.handleMessage(remoteAddress,msg);
   }
@@ -35,16 +34,16 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<ProtoMessa
     logger.trace("channelActive remote peer: {} connected", ctx.channel().remoteAddress());
     this.ctx = ctx;
     remoteAddress = (InetSocketAddress)ctx.channel().remoteAddress();
-    transceiver.registerHandlerActive(remoteAddress,this);
+    transceiver.handlerActive(remoteAddress,this);
   }
 
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     logger.trace("channelInactive remote peer: {} disconnected", ctx.channel().remoteAddress());
-    transceiver.registerHandlerInActive(remoteAddress,handlerId);
+    transceiver.handlerInActive(remoteAddress,handlerId);
   }
 
-  public void sendMessage(ProtoMessage message){
+  public void sendMessage(ProtoMessages.ProtoMessage message){
     if (ctx != null && ctx.channel().isActive() && ctx.channel().isWritable()) {
       ctx.writeAndFlush(message);
     }

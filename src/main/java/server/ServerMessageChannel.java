@@ -10,6 +10,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import protobuf.ProtoMessages.ProtoMessage;
+import protocol.protomessage.ServerMessageHandler;
 import transceiver.MessageTransceiver;
 
 import java.util.concurrent.atomic.AtomicLong;
