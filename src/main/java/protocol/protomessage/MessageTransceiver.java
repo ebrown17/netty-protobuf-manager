@@ -1,28 +1,19 @@
-package transceiver;
+package protocol.protomessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
-import protocol.protomessage.MessageHandler;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageTransceiver {
   private final Logger logger = LoggerFactory.getLogger(MessageTransceiver.class);
-  private final ConcurrentHashMap<Long, MessageHandler> registeredHandlers;
   private final ConcurrentHashMap<InetSocketAddress, MessageHandler> activeHandlers;
   private final Object activeLock = new Object();
 
   public MessageTransceiver() {
-    registeredHandlers = new ConcurrentHashMap<Long, MessageHandler>();
     activeHandlers = new ConcurrentHashMap<InetSocketAddress, MessageHandler>();
-  }
-
-  public void registerHandler(Long handlerId, MessageHandler handler) {
-    logger.info("registerHandler handler registered with Id: {}", handlerId);
-    registeredHandlers.putIfAbsent(handlerId, handler);
-
   }
 
   public void handlerActive(InetSocketAddress addr, MessageHandler handler) {
@@ -37,7 +28,6 @@ public class MessageTransceiver {
     synchronized (activeLock){
       activeHandlers.remove(addr);
     }
-    registeredHandlers.remove(handlerId);
   }
 
   public void handleMessage(InetSocketAddress addr,ProtoMessage msg) {

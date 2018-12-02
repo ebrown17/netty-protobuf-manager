@@ -10,8 +10,8 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import protobuf.ProtoMessages.ProtoMessage;
-import protocol.protomessage.ServerMessageHandler;
-import transceiver.MessageTransceiver;
+import protocol.protomessage.MessageHandler;
+import protocol.protomessage.MessageTransceiver;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -34,7 +34,7 @@ public class ServerMessageChannel extends ChannelInitializer<SocketChannel> {
     p.addLast("protobufDecoder", new ProtobufDecoder(ProtoMessage.getDefaultInstance()));
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
-    p.addLast(new ServerMessageHandler(channelIds.incrementAndGet(),transceiver));
+    p.addLast(new MessageHandler(channelIds.incrementAndGet(),transceiver));
     p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));
     p.addLast("heartBeatHandler", new ServerHeartbeatHandler());
     p.addLast(new ExceptionHandler());

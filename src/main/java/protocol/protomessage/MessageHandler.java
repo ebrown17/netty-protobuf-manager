@@ -5,7 +5,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages;
-import transceiver.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 
@@ -20,7 +19,6 @@ public class MessageHandler extends SimpleChannelInboundHandler<ProtoMessages.Pr
   public MessageHandler(Long id,MessageTransceiver transceiver){
     this.handlerId = id;
     this.transceiver = transceiver;
-    transceiver.registerHandler(handlerId,this);
   }
 
   @Override
