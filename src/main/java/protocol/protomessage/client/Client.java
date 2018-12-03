@@ -1,12 +1,6 @@
-package client;
+package protocol.protomessage.client;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import client.ClientMessageHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -14,7 +8,13 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.concurrent.TimeUnit;
 
 public class Client {
   private final Logger logger = LoggerFactory.getLogger(Client.class);
@@ -40,7 +40,7 @@ public class Client {
     bootstrap = new Bootstrap();
     bootstrap.group(sharedWorkerGroup);
     bootstrap.channel(NioSocketChannel.class);
-    bootstrap.handler(new ClientChannelInitializer());
+    bootstrap.handler(new ClientMessageChannel());
     bootstrap.option(ChannelOption.TCP_NODELAY, true);
     bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
     bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);

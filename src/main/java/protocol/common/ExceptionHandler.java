@@ -1,10 +1,9 @@
-package common_handlers;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package protocol.common;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 
 public class ExceptionHandler extends ChannelDuplexHandler {

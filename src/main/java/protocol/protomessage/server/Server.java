@@ -1,4 +1,4 @@
-package server;
+package protocol.protomessage.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;

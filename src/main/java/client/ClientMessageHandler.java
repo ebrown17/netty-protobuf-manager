@@ -1,10 +1,9 @@
 package client;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.google.protobuf.Message;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
@@ -16,7 +15,7 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<ProtoMessa
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage msg) throws Exception {
-    logger.trace("channelRead0 recieved {} from {}", msg.getMessageType(), ctx.channel().remoteAddress());
+    logger.trace("channelRead0 received {} from {}", msg.getMessageType(), ctx.channel().remoteAddress());
     MessageType type = msg.getMessageType();
     if (MessageType.DEFAULT_MESSAGE == type) {
       logger.debug("channelRead0 {} ", msg);

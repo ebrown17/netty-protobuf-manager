@@ -1,4 +1,4 @@
-package server;
+package protocol.protomessage.server;
 
 import com.google.protobuf.Timestamp;
 import io.netty.channel.ChannelDuplexHandler;
@@ -13,6 +13,10 @@ import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 import java.util.Date;
 
+/**
+ * ServerHeartbeatHandler is configured to send heartbeat messages. Currently configured to send a heartbeat whenever
+ * the writer is idle for the configured time in {@link ServerMessageChannel#WRITE_IDLE_TIME WRITE_IDLE_TIME } .
+ */
 public class ServerHeartbeatHandler extends ChannelDuplexHandler {
 
   private final Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);

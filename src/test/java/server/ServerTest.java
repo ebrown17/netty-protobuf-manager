@@ -1,11 +1,7 @@
 package server;
 
-import java.net.InetSocketAddress;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import server.Server;
 
 public class ServerTest {
   final static Logger logger = LoggerFactory.getLogger("server.test.java.server.ServerTest");

@@ -1,9 +1,9 @@
-package client;
-
-import java.util.concurrent.TimeUnit;
+package protocol.protomessage.client;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class ClientConnectionListener implements ChannelFutureListener {

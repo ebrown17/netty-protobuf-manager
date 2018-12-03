@@ -6,6 +6,8 @@ import protobuf.JdssAuditor.DisplayData.Time;
 import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
 import protobuf.ProtoMessages.ProtoMessage.Status;
+import protocol.protomessage.client.Client;
+import protocol.protomessage.client.ClientConnectionFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
