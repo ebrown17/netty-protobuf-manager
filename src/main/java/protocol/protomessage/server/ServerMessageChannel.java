@@ -9,7 +9,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import protobuf.ProtoMessages.ProtoMessage;
-import protocol.common.ExceptionHandler;
+import protocol.protomessage.ExceptionHandler;
 import protocol.protomessage.MessageHandler;
 import protocol.protomessage.MessageTransceiver;
 

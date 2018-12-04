@@ -1,6 +1,5 @@
 package protocol.protomessage.client;
 
-import client.ClientMessageHandler;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -11,6 +10,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
+import protocol.protomessage.MessageHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +22,7 @@ public class Client {
   private InetSocketAddress serverAddress;
   private Bootstrap bootstrap;
   private Channel channel;
-  private ClientMessageHandler messageHandler;
+  private MessageHandler messageHandler;
 
   private static final long RETRY_TIME = 10L;
   private static final long MAX_RETRY_TIME = 60L;
@@ -71,7 +71,7 @@ public class Client {
     initialRetryTime = 0;
     disconnectInitiated = false;
     channel = future.channel();
-    messageHandler = channel.pipeline().get(ClientMessageHandler.class);
+    messageHandler = channel.pipeline().get(MessageHandler.class);
     // future to handle when client connection is lost or closed
     closedListener = new ClientClosedListener(this);
     channel.closeFuture().addListener(closedListener);

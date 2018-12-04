@@ -9,7 +9,7 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
 import protobuf.ProtoMessages.ProtoMessage;
-import protocol.common.ExceptionHandler;
+import protocol.protomessage.ExceptionHandler;
 import protocol.protomessage.MessageHandler;
 import protocol.protomessage.MessageTransceiver;
 
@@ -39,7 +39,7 @@ public class ClientMessageChannel extends ChannelInitializer<SocketChannel> {
     p.addLast(new MessageHandler(channelIds.incrementAndGet(),transceiver));
 
     p.addLast("idleStateHandler", new IdleStateHandler(READ_IDLE_TIME, 0, 0));
-    p.addLast("heartBeatHandler", new ClientHeartBeatHandler(READ_IDLE_TIME, HEARTBEAT_MISS_LIMIT, p.channel()));
+    p.addLast("heartBeatHandler", new ClientHeartbeatHandler(READ_IDLE_TIME, HEARTBEAT_MISS_LIMIT, p.channel()));
 
     p.addLast(new ExceptionHandler());
   }

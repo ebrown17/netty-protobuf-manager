@@ -1,4 +1,4 @@
-package protocol.common;
+package protocol.protomessage;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

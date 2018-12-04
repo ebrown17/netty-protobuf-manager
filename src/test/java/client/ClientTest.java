@@ -2,10 +2,6 @@ package client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.JdssAuditor.DisplayData.Time;
-import protobuf.ProtoMessages.ProtoMessage;
-import protobuf.ProtoMessages.ProtoMessage.MessageType;
-import protobuf.ProtoMessages.ProtoMessage.Status;
 import protocol.protomessage.client.Client;
 import protocol.protomessage.client.ClientConnectionFactory;
 
@@ -52,7 +48,7 @@ public class ClientTest {
     }*/
     int count = 0;
     SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
-    Time time;
+
     while (true) {
       try {
         count++;
@@ -64,16 +60,16 @@ public class ClientTest {
           remList.clear();
         }
 
-        Status status = Status.newBuilder().setHealth("GOOD").setErrors(5).setUptime(100).build();
+   /*     Status status = Status.newBuilder().setHealth("GOOD").setErrors(5).setUptime(100).build();
         
         ProtoMessage data= ProtoMessage.newBuilder().setMessageType(MessageType.STATUS).setStatus(status).build();
         
         for (Client client : list) {
           client.sendMessage(data);
           Thread.sleep(1000);
-        }
+        }*/
 
-
+        Thread.sleep(1000);
 
 /*
         if ((count % 15) == 0) {

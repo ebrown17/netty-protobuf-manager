@@ -10,9 +10,9 @@ import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
-public class ClientHeartBeatHandler extends ChannelDuplexHandler {
+public class ClientHeartbeatHandler extends ChannelDuplexHandler {
 
-  private final Logger logger = LoggerFactory.getLogger(ClientHeartBeatHandler.class);
+  private final Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
   private int missedLimit, missCount = 0, expectedInterval;
 
   /**
@@ -22,7 +22,7 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
    * started.
    * <p>
    * By default only a heartbeat read will reset the miss count. The method
-   * {@link ClientHeartBeatHandler#resetMissCounter() resetMissCounter } can be called on any read.
+   * {@link ClientHeartbeatHandler#resetMissCounter() resetMissCounter } can be called on any read.
    *
    * @param expectedInterval The expected heartbeat interval. This will be used to determine if server
    *                         is no longer alive.
@@ -30,7 +30,7 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
    * @param channel          The channel to monitor heartbeats on. Expecting server to send heartbeats; only
    *                         monitors channel read events.
    */
-  public ClientHeartBeatHandler(int expectedInterval, int missedLimit, Channel channel) {
+  public ClientHeartbeatHandler(int expectedInterval, int missedLimit, Channel channel) {
     this.expectedInterval = expectedInterval;
     this.missedLimit = missedLimit;
   }
@@ -59,7 +59,7 @@ public class ClientHeartBeatHandler extends ChannelDuplexHandler {
   public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     ProtoMessage message = ((ProtoMessage) msg);
     logger.debug("channelRead recieved {} from {}", message.getMessageType(), ctx.channel().remoteAddress());
-    if (MessageType.HEARTBEAT == message.getMessageType()) {
+   if (MessageType.HEARTBEAT == message.getMessageType()) {
       resetMissCounter();
     }
     else {
