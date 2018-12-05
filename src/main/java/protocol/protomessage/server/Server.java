@@ -122,9 +122,7 @@ public class Server {
         return;
       }
 
-      for (ChannelFutureListener listener : channelListenerMap.get(port)) {
-        channel.closeFuture().removeListener(listener);
-      }
+      channelListenerMap.get(port).forEach(listener -> channel.closeFuture().removeListener(listener));
 
       channel.close().addListener(future -> {
         if (!future.isSuccess()) {
