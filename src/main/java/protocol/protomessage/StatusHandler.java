@@ -5,6 +5,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
+import protobuf.ProtoMessages.ProtoMessage.Status;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 public class StatusHandler extends SimpleChannelInboundHandler<ProtoMessage> {
@@ -17,6 +18,8 @@ public class StatusHandler extends SimpleChannelInboundHandler<ProtoMessage> {
     MessageType type = msg.getMessageType();
     if (MessageType.STATUS == type) {
       logger.debug("channelRead0 {} STATUS: {}",ctx.channel().remoteAddress(),msg);
+      Status status =  msg.getStatus();
+
     }
     else {
       ctx.fireChannelRead(msg);
