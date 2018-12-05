@@ -29,7 +29,7 @@ public class Client {
   private static final int MAX_RETRY_UNTIL_INCR = 30;
   // TODO probably never want to stop retry; so this could be removed
   private static final int TOTAL_MAX_RETRY_COUNT = 360;
-  private ClientConnectionListener retryistener;
+  private ClientConnectionListener retryListener;
   private ClientClosedListener closedListener;
   private int retryCount = 0;
   private long initialRetryTime = 0;
@@ -51,18 +51,18 @@ public class Client {
       logger.warn("connect called while connection already active");
       return;
     }
-    if (retryistener != null && retryistener.isAttemptingConnection()) {
+    if (retryListener != null && retryListener.isAttemptingConnection()) {
       logger.warn("connect called while connection attempt already in progress");
       return;
     }
-    if (retryistener == null) {
+    if (retryListener == null) {
       logger.info("connect creating new connection listener");
-      retryistener = new ClientConnectionListener(this);
+      retryListener = new ClientConnectionListener(this);
     }
 
     ChannelFuture channelFuture = bootstrap.connect(serverAddress);
-    retryistener.setAttemptingConnection();
-    channelFuture.addListener(retryistener);
+    retryListener.setAttemptingConnection();
+    channelFuture.addListener(retryListener);
   }
 
   protected void connectionEstablished(ChannelFuture future) {
