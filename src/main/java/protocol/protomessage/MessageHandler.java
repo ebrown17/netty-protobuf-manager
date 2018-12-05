@@ -50,6 +50,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<ProtoMessage> {
 
   public void sendMessage(ProtoMessage message) {
     if (ctx != null && ctx.channel().isActive() && ctx.channel().isWritable()) {
+      logger.trace("sendMessage {} to {} written to wire",message.getMessageType(),remoteAddress);
       ctx.writeAndFlush(message);
     }
     else {

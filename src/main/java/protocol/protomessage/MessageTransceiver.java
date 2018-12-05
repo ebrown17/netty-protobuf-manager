@@ -36,7 +36,7 @@ public class MessageTransceiver {
   }
 
   public void sendMessage(InetSocketAddress addr,ProtoMessage msg) {
-    logger.debug("sendMessage to addr: {} with {}", addr,msg);
+    logger.trace("sendMessage to addr: {} with {}", addr,msg);
     MessageHandler handler = activeHandlers.get(addr);
     if(handler != null){
       handler.sendMessage(msg);

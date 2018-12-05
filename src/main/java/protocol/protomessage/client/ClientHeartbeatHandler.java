@@ -27,10 +27,9 @@ public class ClientHeartbeatHandler extends ChannelDuplexHandler {
    * @param expectedInterval The expected heartbeat interval. This will be used to determine if server
    *                         is no longer alive.
    * @param missedLimit      The max amount of heartbeats allowed until handler closes channel.
-   * @param channel          The channel to monitor heartbeats on. Expecting server to send heartbeats; only
-   *                         monitors channel read events.
+   *
    */
-  public ClientHeartbeatHandler(int expectedInterval, int missedLimit, Channel channel) {
+  public ClientHeartbeatHandler(int expectedInterval, int missedLimit) {
     this.expectedInterval = expectedInterval;
     this.missedLimit = missedLimit;
   }

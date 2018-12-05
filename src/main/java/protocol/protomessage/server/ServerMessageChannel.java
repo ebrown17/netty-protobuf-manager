@@ -35,9 +35,8 @@ public class ServerMessageChannel extends ChannelInitializer<SocketChannel> {
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
     p.addLast(new MessageHandler(channelIds.incrementAndGet(),transceiver));
-    p.addLast(new ServerStatusHandler());
     p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));
-    p.addLast("heartBeatHandler", new ServerHeartbeatHandler());
+    p.addLast("heartBeatHandler", new ServerHeartbeatHandler(transceiver));
     p.addLast(new ExceptionHandler());
   }
 

@@ -10,7 +10,9 @@ import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.HeartBeat;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
+import protocol.protomessage.MessageTransceiver;
 
+import java.net.InetSocketAddress;
 import java.util.Date;
 
 /**
@@ -20,16 +22,19 @@ import java.util.Date;
 public class ServerHeartbeatHandler extends ChannelDuplexHandler {
 
   private final Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);
+  private final MessageTransceiver transceiver;
+
+  ServerHeartbeatHandler(MessageTransceiver transceiver) {
+    this.transceiver = transceiver;
+  }
 
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
     if (evt instanceof IdleStateEvent) {
       IdleStateEvent e = (IdleStateEvent) evt;
       if (e.state() == IdleState.WRITER_IDLE) {
-        if (ctx.channel().isActive() && ctx.channel().isWritable()) {
-          logger.debug("userEventTriggered sendheartBeat");
-          ctx.writeAndFlush(generateHeartBeat());
-        }
+        logger.debug("userEventTriggered sendheartBeat");
+        transceiver.sendMessage((InetSocketAddress) ctx.channel().remoteAddress(), generateHeartBeat());
       }
     }
   }
