@@ -12,7 +12,6 @@ import protobuf.ProtoMessages.ProtoMessage;
 import protocol.protomessage.ExceptionHandler;
 import protocol.protomessage.MessageHandler;
 import protocol.protomessage.MessageTransceiver;
-import protocol.protomessage.StatusHandler;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -36,7 +35,7 @@ public class ServerMessageChannel extends ChannelInitializer<SocketChannel> {
     p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
     p.addLast("protobufEncoder", new ProtobufEncoder());
     p.addLast(new MessageHandler(channelIds.incrementAndGet(),transceiver));
-    p.addLast(new StatusHandler());
+    p.addLast(new ServerStatusHandler());
     p.addLast("idleStateHandler", new IdleStateHandler(0, WRITE_IDLE_TIME, 0));
     p.addLast("heartBeatHandler", new ServerHeartbeatHandler());
     p.addLast(new ExceptionHandler());

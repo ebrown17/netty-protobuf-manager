@@ -1,4 +1,4 @@
-package protocol.protomessage;
+package protocol.protomessage.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -8,9 +8,9 @@ import protobuf.ProtoMessages.ProtoMessage;
 import protobuf.ProtoMessages.ProtoMessage.Status;
 import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
-public class StatusHandler extends SimpleChannelInboundHandler<ProtoMessage> {
+public class ServerStatusHandler extends SimpleChannelInboundHandler<ProtoMessage> {
 
-  private final Logger logger = LoggerFactory.getLogger(StatusHandler.class);
+  private final Logger logger = LoggerFactory.getLogger(ServerStatusHandler.class);
 
   @Override
   protected void channelRead0(ChannelHandlerContext ctx, ProtoMessage msg) throws Exception {
