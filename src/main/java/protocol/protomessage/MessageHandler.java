@@ -45,7 +45,7 @@ public class MessageHandler extends SimpleChannelInboundHandler<ProtoMessage> {
   @Override
   public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     logger.trace("channelInactive remote peer: {} disconnected", ctx.channel().remoteAddress());
-    transceiver.handlerInActive(remoteAddress, handlerId);
+    transceiver.handlerInActive(remoteAddress);
   }
 
   public void sendMessage(ProtoMessage message) {

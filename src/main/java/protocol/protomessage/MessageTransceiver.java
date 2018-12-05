@@ -23,7 +23,7 @@ public class MessageTransceiver {
     }
   }
 
-  public void handlerInActive(InetSocketAddress addr, Long handlerId) {
+  public void handlerInActive(InetSocketAddress addr) {
     logger.info("registerHandlerInActive handler inactive with addr: {}", addr);
     synchronized (activeLock){
       activeHandlers.remove(addr);
