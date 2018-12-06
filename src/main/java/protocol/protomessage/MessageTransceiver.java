@@ -6,34 +6,44 @@ import protobuf.ProtoMessages.ProtoMessage;
 import protocol.protomessage.client.Client;
 
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageTransceiver {
   private final Logger logger = LoggerFactory.getLogger(MessageTransceiver.class);
   private final ConcurrentHashMap<InetSocketAddress, MessageHandler> activeHandlers;
   private final ConcurrentHashMap<InetSocketAddress, MessageReader> channelReaders;
+  private final ArrayList<MessageHandlerListener> handlerListeners;
   private final Object activeLock = new Object();
+  private final int channelPort;
 
-  public MessageTransceiver() {
+  public MessageTransceiver(int channelPort) {
     activeHandlers = new ConcurrentHashMap<InetSocketAddress, MessageHandler>();
     channelReaders = new ConcurrentHashMap<InetSocketAddress, MessageReader>();
+    handlerListeners = new ArrayList<MessageHandlerListener>();
+    this.channelPort = channelPort;
   }
 
-  public void handlerActive(InetSocketAddress addr, MessageHandler handler) {
+  protected void handlerActive(InetSocketAddress addr, MessageHandler handler) {
     logger.info("registerHandlerActive handler active with addr: {}", addr);
     synchronized (activeLock) {
-      activeHandlers.putIfAbsent(addr, handler);
+      MessageHandler activeHandler = activeHandlers.get(addr);
+      if(activeHandler == null){
+        activeHandlers.put(addr,handler);
+        handlerListeners.forEach(listener -> listener.registerActiveHandler(channelPort, addr));
+      }
     }
   }
 
-  public void handlerInActive(InetSocketAddress addr) {
+  protected void handlerInActive(InetSocketAddress addr) {
     logger.info("registerHandlerInActive handler inactive with addr: {}", addr);
     synchronized (activeLock) {
       activeHandlers.remove(addr);
+      handlerListeners.forEach(listener -> listener.registerInActiveHandler(channelPort, addr));
     }
   }
 
-  public void handleMessage(InetSocketAddress addr, ProtoMessage msg) {
+  protected void handleMessage(InetSocketAddress addr, ProtoMessage msg) {
     logger.trace("handleMessage from {} with {}", addr, msg);
     MessageReader reader = channelReaders.get(addr);
     if(reader != null){
@@ -41,8 +51,14 @@ public class MessageTransceiver {
     }
   }
 
-  public void registerChannelReader(InetSocketAddress addr,MessageReader reader){
+  public void registerChannelReader(InetSocketAddress addr, MessageReader reader){
       channelReaders.putIfAbsent(addr,reader);
+  }
+
+  public void registerHandlerActivityListener(MessageHandlerListener listener){
+    if(!handlerListeners.contains(listener)){
+      handlerListeners.add(listener);
+    }
   }
 
   public void sendMessage(InetSocketAddress addr, ProtoMessage msg) {

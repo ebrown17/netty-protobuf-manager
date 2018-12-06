@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages;
 import protobuf.ProtoMessages.ProtoMessage;
+import protocol.protomessage.MessageHandlerListener;
 import protocol.protomessage.MessageTransceiver;
 
 import java.net.InetSocketAddress;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 
-public class Server {
+public class Server implements MessageHandlerListener {
 
   private EventLoopGroup bossGroup;
   private EventLoopGroup workerGroup;
@@ -28,6 +29,7 @@ public class Server {
   private ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>> channelListenerMap;
   private ConcurrentHashMap<Integer, InetSocketAddress> portAddressMap;
   private ConcurrentHashMap<Integer, MessageTransceiver> transceiverMap;
+  private ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>> channelConnectionMap;
 
   private final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -40,6 +42,7 @@ public class Server {
     channelListenerMap = new ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>>(INITIAL_CHANNEL_LIMIT);
     portAddressMap = new ConcurrentHashMap<Integer, InetSocketAddress>(INITIAL_CHANNEL_LIMIT);
     transceiverMap = new ConcurrentHashMap<Integer, MessageTransceiver>(INITIAL_CHANNEL_LIMIT);
+    channelConnectionMap = new ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>>(INITIAL_CHANNEL_LIMIT);
 
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
@@ -61,7 +64,8 @@ public class Server {
       if (portAddressMap.get(port) == null) {
         InetSocketAddress sockAddr = new InetSocketAddress(port);
         portAddressMap.put(port, sockAddr);
-        MessageTransceiver transceiver = new MessageTransceiver();
+        MessageTransceiver transceiver = new MessageTransceiver(port);
+        transceiver.registerHandlerActivityListener(this);
         transceiverMap.putIfAbsent(port,transceiver);
         bootstrap.childHandler(new ServerMessageChannel(transceiver));
       }
@@ -186,19 +190,57 @@ public class Server {
     return allActive;
   }
 
-  public void broadcastOnChannel(int port, ProtoMessage messgage ){
-    MessageTransceiver transceiver = transceiverMap.get(port);
-    if(transceiver != null){
-      transceiver.broadcastMessage(messgage);
+  @Override
+  public void registerActiveHandler(int channelPort, InetSocketAddress remoteConnection) {
+    ArrayList<InetSocketAddress> channelConnections = channelConnectionMap.get(channelPort);
+    if(channelConnections == null){
+      channelConnections = new ArrayList<InetSocketAddress>();
+    }
+    if(!channelConnections.contains(remoteConnection)){
+      channelConnections.add(remoteConnection);
+    }
+    channelConnectionMap.put(channelPort,channelConnections);
+
+  }
+
+  @Override
+  public void registerInActiveHandler(int channelPort, InetSocketAddress remoteConnection) {
+    ArrayList<InetSocketAddress> channelConnections = channelConnectionMap.get(channelPort);
+    if(channelConnections != null){
+      channelConnections.remove(remoteConnection);
+      channelConnectionMap.put(channelPort,channelConnections);
     }
   }
-  //TODO
-  public void broadcastOnAllChannels(ProtoMessage message){
 
+  /**
+   * Sends a message to all connected clients on specified port
+   * @param port number of channel to send message on
+   * @param message to send
+   */
+  public void broadcastOnChannel(int port, ProtoMessage message ){
+    MessageTransceiver transceiver = transceiverMap.get(port);
+    if(transceiver != null){
+      transceiver.broadcastMessage(message);
+    }
+  }
+
+  /**
+   *  Broadcasts a message on all channels.
+   * @param message
+   */
+  public void broadcastOnAllChannels(ProtoMessage message){
+    transceiverMap.forEachValue(1,transceiver -> transceiver.broadcastMessage(message));
   }
   //TODO
-  public void sendMessage(int port,InetSocketAddress addr, ProtoMessage msg ){
-
+  public void sendMessage(InetSocketAddress addr, ProtoMessage message ){
+    int port = addr.getPort();
+    MessageTransceiver transceiver = transceiverMap.get(port);
+    if(transceiver != null){
+      transceiver.sendMessage(addr,message);
+    }
+    else{
+      logger.error("sendMessage No tranceiver found for {} connected to port channel {}",addr.getHostName(),addr.getPort());
+    }
   }
 
   /*public String getServerName() {
