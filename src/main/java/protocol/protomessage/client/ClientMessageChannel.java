@@ -23,8 +23,8 @@ public class ClientMessageChannel extends ChannelInitializer<SocketChannel> {
   private static final AtomicLong channelIds = new AtomicLong(0L);
   private final MessageTransceiver transceiver;
 
-  ClientMessageChannel(){
-    transceiver = new MessageTransceiver();
+  ClientMessageChannel(MessageTransceiver transceiver){
+    this.transceiver =transceiver;
   }
 
   @Override

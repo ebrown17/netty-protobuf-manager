@@ -11,18 +11,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import protobuf.ProtoMessages.ProtoMessage;
 import protocol.protomessage.MessageHandler;
+import protocol.protomessage.MessageReader;
+import protocol.protomessage.MessageTransceiver;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
-public class Client {
+public class Client implements MessageReader {
   private final Logger logger = LoggerFactory.getLogger(Client.class);
 
   private InetSocketAddress serverAddress;
   private Bootstrap bootstrap;
   private Channel channel;
   private MessageHandler messageHandler;
+  private MessageTransceiver transceiver;
+  private Long messageHandlerId;
 
   private static final long RETRY_TIME = 10L;
   private static final long MAX_RETRY_TIME = 60L;
@@ -35,12 +39,13 @@ public class Client {
   private long initialRetryTime = 0;
   private boolean disconnectInitiated = true;
 
-  public Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup) {
+  public Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup,MessageTransceiver transceiver) {
     this.serverAddress = serverAddress;
+    this.transceiver = transceiver;
     bootstrap = new Bootstrap();
     bootstrap.group(sharedWorkerGroup);
     bootstrap.channel(NioSocketChannel.class);
-    bootstrap.handler(new ClientMessageChannel());
+    bootstrap.handler(new ClientMessageChannel(transceiver));
     bootstrap.option(ChannelOption.TCP_NODELAY, true);
     bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
     bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
@@ -71,7 +76,7 @@ public class Client {
     initialRetryTime = 0;
     disconnectInitiated = false;
     channel = future.channel();
-    messageHandler = channel.pipeline().get(MessageHandler.class);
+    transceiver.registerChannelReader(serverAddress,this);
     // future to handle when client connection is lost or closed
     closedListener = new ClientClosedListener(this);
     channel.closeFuture().addListener(closedListener);
@@ -124,6 +129,20 @@ public class Client {
     }
   }
 
+  public void sendMessage(ProtoMessage message) {
+    if (!isActive()) {
+      logger.warn("sendData can't send data on null or closed channel");
+      return;
+    }
+    logger.debug("sendData {} to remote host", message.toString(), channel.remoteAddress());
+    transceiver.sendMessage(serverAddress,message);
+  }
+
+  @Override
+  public void readMessage(InetSocketAddress addr, ProtoMessage msg){
+    logger.debug("messageRead from {} with {}", addr, msg);
+  }
+
   public Channel getChannel() {
     return channel;
   }
@@ -136,12 +155,4 @@ public class Client {
     return (channel != null && (channel.isOpen() || channel.isActive()));
   }
 
-  public void sendMessage(ProtoMessage message) {
-    if (!isActive()) {
-      logger.warn("sendData can't send data on null or closed channel");
-      return;
-    }
-    logger.trace("sendData {} to remote host", message.toString(), channel.remoteAddress());
-    messageHandler.sendMessage(message);
-  }
 }

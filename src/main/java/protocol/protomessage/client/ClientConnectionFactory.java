@@ -8,6 +8,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import protocol.protomessage.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 
@@ -18,6 +19,7 @@ public class ClientConnectionFactory {
   private EventLoopGroup workerGroup;
   private Class<? extends Channel> channelClass;
   private PooledByteBufAllocator allocator;
+  private final MessageTransceiver transceiver;
 
   public ClientConnectionFactory() {
     // 0 forces netty to use default number of threads which is max number of processors * 2
@@ -25,6 +27,7 @@ public class ClientConnectionFactory {
     this.workerGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("client", true));
     this.channelClass = NioSocketChannel.class;
     this.allocator = PooledByteBufAllocator.DEFAULT;
+    this.transceiver = new MessageTransceiver();
 
   }
 
@@ -34,7 +37,7 @@ public class ClientConnectionFactory {
   }
 
   private Client createClient(InetSocketAddress address) {
-    return new Client(address, workerGroup);
+    return new Client(address, workerGroup,transceiver);
   }
 
 }

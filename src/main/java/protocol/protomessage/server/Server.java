@@ -9,6 +9,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import protobuf.ProtoMessages;
+import protobuf.ProtoMessages.ProtoMessage;
+import protocol.protomessage.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class Server {
   private ConcurrentHashMap<Integer, Channel> channelMap;
   private ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>> channelListenerMap;
   private ConcurrentHashMap<Integer, InetSocketAddress> portAddressMap;
+  private ConcurrentHashMap<Integer, MessageTransceiver> transceiverMap;
 
   private final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -35,6 +39,7 @@ public class Server {
     channelMap = new ConcurrentHashMap<Integer, Channel>(INITIAL_CHANNEL_LIMIT);
     channelListenerMap = new ConcurrentHashMap<Integer, ArrayList<ChannelFutureListener>>(INITIAL_CHANNEL_LIMIT);
     portAddressMap = new ConcurrentHashMap<Integer, InetSocketAddress>(INITIAL_CHANNEL_LIMIT);
+    transceiverMap = new ConcurrentHashMap<Integer, MessageTransceiver>(INITIAL_CHANNEL_LIMIT);
 
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
@@ -51,13 +56,14 @@ public class Server {
     bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
   }
 
-  public <T extends ChannelInitializer<SocketChannel>> void addChannel(int port, Class<T> channelInitializer) {
+  public <T extends ChannelInitializer<SocketChannel>> void addChannel(int port) {
     try {
       if (portAddressMap.get(port) == null) {
-        ChannelInitializer<SocketChannel> channelInit = channelInitializer.newInstance();
         InetSocketAddress sockAddr = new InetSocketAddress(port);
         portAddressMap.put(port, sockAddr);
-        bootstrap.childHandler(channelInit);
+        MessageTransceiver transceiver = new MessageTransceiver();
+        transceiverMap.putIfAbsent(port,transceiver);
+        bootstrap.childHandler(new ServerMessageChannel(transceiver));
       }
       else {
         logger.warn("addChannel port {} already added to server bootstrap; not adding.", port);
@@ -180,6 +186,21 @@ public class Server {
     return allActive;
   }
 
+  public void broadcastOnChannel(int port, ProtoMessage messgage ){
+    MessageTransceiver transceiver = transceiverMap.get(port);
+    if(transceiver != null){
+      transceiver.broadcastMessage(messgage);
+    }
+  }
+  //TODO
+  public void broadcastOnAllChannels(ProtoMessage message){
+
+  }
+  //TODO
+  public void sendMessage(int port,InetSocketAddress addr, ProtoMessage msg ){
+
+  }
+
   /*public String getServerName() {
     return socketAddress.getHostString();
   }*/
@@ -187,14 +208,21 @@ public class Server {
   public static void main(String... args) {
 
     Server server = new Server();
-    server.addChannel(6000, ServerMessageChannel.class);
-    server.addChannel(6001, ServerMessageChannel.class);
+    server.addChannel(6000);
+    server.addChannel(6001);
     server.startServer();
+
+    ProtoMessage.DefaultMessage dfm = ProtoMessage.DefaultMessage.newBuilder().setData("testests").build();
+    ProtoMessage tt = ProtoMessage.newBuilder().setMessageType(ProtoMessage.MessageType.DEFAULT_MESSAGE).setDefaultMessage(dfm).build();
 
     try {
       Thread.sleep(5000);
       server.closeChannel(6001);
-      Thread.sleep(450000);
+      for(int i =0;i<15;i++){
+        server.broadcastOnChannel(6001,tt);
+        Thread.sleep(10000);
+      }
+
       LoggerFactory.getLogger("main").info("all active {} channels", server.allActive());
       server.shutdownServer();
     }
