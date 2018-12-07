@@ -9,13 +9,14 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages;
 import protobuf.ProtoMessages.ProtoMessage;
 import protocol.protomessage.MessageHandlerListener;
 import protocol.protomessage.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 
@@ -30,6 +31,7 @@ public class Server implements MessageHandlerListener {
   private ConcurrentHashMap<Integer, InetSocketAddress> portAddressMap;
   private ConcurrentHashMap<Integer, MessageTransceiver> transceiverMap;
   private ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>> channelConnectionMap;
+  private ConcurrentHashMap<InetSocketAddress, Integer> remoteHostToChannelMap;
 
   private final Logger logger = LoggerFactory.getLogger(Server.class);
 
@@ -43,6 +45,7 @@ public class Server implements MessageHandlerListener {
     portAddressMap = new ConcurrentHashMap<Integer, InetSocketAddress>(INITIAL_CHANNEL_LIMIT);
     transceiverMap = new ConcurrentHashMap<Integer, MessageTransceiver>(INITIAL_CHANNEL_LIMIT);
     channelConnectionMap = new ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>>(INITIAL_CHANNEL_LIMIT);
+    remoteHostToChannelMap = new  ConcurrentHashMap<InetSocketAddress, Integer>(INITIAL_CHANNEL_LIMIT);
 
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
@@ -198,9 +201,9 @@ public class Server implements MessageHandlerListener {
     }
     if(!channelConnections.contains(remoteConnection)){
       channelConnections.add(remoteConnection);
+      remoteHostToChannelMap.put(remoteConnection,channelPort);
     }
     channelConnectionMap.put(channelPort,channelConnections);
-
   }
 
   @Override
@@ -208,7 +211,18 @@ public class Server implements MessageHandlerListener {
     ArrayList<InetSocketAddress> channelConnections = channelConnectionMap.get(channelPort);
     if(channelConnections != null){
       channelConnections.remove(remoteConnection);
+      remoteHostToChannelMap.remove(remoteConnection);
       channelConnectionMap.put(channelPort,channelConnections);
+    }
+  }
+
+  public List<InetSocketAddress> getChannelConnections(int channelPort){
+    ArrayList<InetSocketAddress> channelConnections = channelConnectionMap.get(channelPort);
+    if(channelConnections != null){
+      return channelConnections;
+    }
+    else{
+      return Collections.emptyList();
     }
   }
 
@@ -233,8 +247,8 @@ public class Server implements MessageHandlerListener {
   }
   //TODO
   public void sendMessage(InetSocketAddress addr, ProtoMessage message ){
-    int port = addr.getPort();
-    MessageTransceiver transceiver = transceiverMap.get(port);
+    int channelPort = remoteHostToChannelMap.get(addr);
+    MessageTransceiver transceiver = transceiverMap.get(channelPort);
     if(transceiver != null){
       transceiver.sendMessage(addr,message);
     }
@@ -242,10 +256,6 @@ public class Server implements MessageHandlerListener {
       logger.error("sendMessage No tranceiver found for {} connected to port channel {}",addr.getHostName(),addr.getPort());
     }
   }
-
-  /*public String getServerName() {
-    return socketAddress.getHostString();
-  }*/
 
   public static void main(String... args) {
 
@@ -261,7 +271,8 @@ public class Server implements MessageHandlerListener {
       Thread.sleep(5000);
       server.closeChannel(6001);
       for(int i =0;i<15;i++){
-        server.broadcastOnChannel(6001,tt);
+        server.getChannelConnections(6001).forEach(remote ->server.sendMessage(remote,tt));
+       // server.broadcastOnChannel(6001,tt);
         Thread.sleep(10000);
       }
 

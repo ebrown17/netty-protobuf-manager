@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import protocol.protomessage.MessageTransceiver;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientConnectionFactory {
 
@@ -19,7 +21,7 @@ public class ClientConnectionFactory {
   private EventLoopGroup workerGroup;
   private Class<? extends Channel> channelClass;
   private PooledByteBufAllocator allocator;
-  private final MessageTransceiver transceiver;
+  private final HashMap<Integer, MessageTransceiver> transceiverMap;
 
   public ClientConnectionFactory() {
     // 0 forces netty to use default number of threads which is max number of processors * 2
@@ -27,16 +29,20 @@ public class ClientConnectionFactory {
     this.workerGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("client", true));
     this.channelClass = NioSocketChannel.class;
     this.allocator = PooledByteBufAllocator.DEFAULT;
-    this.transceiver = new MessageTransceiver();
+    transceiverMap = new HashMap<Integer, MessageTransceiver>();
 
   }
 
   public Client createClient(String host, int port) {
     InetSocketAddress address = new InetSocketAddress(host, port);
-    return createClient(address);
+    MessageTransceiver transceiver = transceiverMap.get(port);
+    if(transceiver == null){
+      transceiver = new MessageTransceiver(port);
+    }
+    return createClient(address,transceiver);
   }
 
-  private Client createClient(InetSocketAddress address) {
+  private Client createClient(InetSocketAddress address,MessageTransceiver transceiver) {
     return new Client(address, workerGroup,transceiver);
   }
 
