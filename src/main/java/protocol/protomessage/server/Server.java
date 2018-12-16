@@ -66,11 +66,12 @@ public class Server implements MessageHandlerListener {
     try {
       if (portAddressMap.get(port) == null) {
         InetSocketAddress sockAddr = new InetSocketAddress(port);
-        portAddressMap.put(port, sockAddr);
-        MessageTransceiver transceiver = new MessageTransceiver(port);
-        transceiver.registerHandlerActivityListener(this);
-        transceiverMap.putIfAbsent(port,transceiver);
-        bootstrap.childHandler(new ServerMessageChannel(transceiver));
+        portAddressMap.putIfAbsent(port, sockAddr);
+        MessageTransceiver transceiver = transceiverMap.putIfAbsent(port,new MessageTransceiver(port));
+        if(transceiver!=null){
+          transceiver.registerHandlerActivityListener(this);
+          bootstrap.childHandler(new ServerMessageChannel(transceiver));
+        }
       }
       else {
         logger.warn("addChannel port {} already added to server bootstrap; not adding.", port);
@@ -212,7 +213,7 @@ public class Server implements MessageHandlerListener {
     if(channelConnections != null){
       channelConnections.remove(remoteConnection);
       remoteHostToChannelMap.remove(remoteConnection);
-      channelConnectionMap.put(channelPort,channelConnections);
+      channelConnectionMap.putIfAbsent(channelPort,channelConnections);
     }
   }
 

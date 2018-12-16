@@ -29,7 +29,7 @@ public class MessageTransceiver {
     synchronized (activeLock) {
       MessageHandler activeHandler = activeHandlers.get(addr);
       if(activeHandler == null){
-        activeHandlers.put(addr,handler);
+        activeHandlers.putIfAbsent(addr,handler);
         handlerListeners.forEach(listener -> listener.registerActiveHandler(channelPort, addr));
       }
     }
@@ -62,10 +62,12 @@ public class MessageTransceiver {
   }
 
   public void sendMessage(InetSocketAddress addr, ProtoMessage msg) {
-    logger.trace("sendMessage to addr: {} with {}", addr, msg);
-    MessageHandler handler = activeHandlers.get(addr);
-    if (handler != null) {
-      handler.sendMessage(msg);
+    synchronized (activeLock) {
+      logger.trace("sendMessage to addr: {} with {}", addr, msg);
+      MessageHandler handler = activeHandlers.get(addr);
+      if (handler != null) {
+        handler.sendMessage(msg);
+      }
     }
   }
 
