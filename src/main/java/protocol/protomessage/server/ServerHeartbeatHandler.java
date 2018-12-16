@@ -21,7 +21,7 @@ import java.util.Date;
  */
 public class ServerHeartbeatHandler extends ChannelDuplexHandler {
 
-  private final Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);
+  private final static Logger logger = LoggerFactory.getLogger(ServerHeartbeatHandler.class);
   private final MessageTransceiver transceiver;
 
   ServerHeartbeatHandler(MessageTransceiver transceiver) {

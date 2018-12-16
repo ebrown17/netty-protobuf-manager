@@ -12,7 +12,7 @@ import java.net.InetSocketAddress;
 public class MessageHandler extends SimpleChannelInboundHandler<ProtoMessage> {
 
   private ChannelHandlerContext ctx;
-  private final Logger logger = LoggerFactory.getLogger(MessageHandler.class);
+  private final static Logger logger = LoggerFactory.getLogger(MessageHandler.class);
   private InetSocketAddress remoteAddress;
   private final MessageTransceiver transceiver;
   private final Long handlerId;

@@ -12,7 +12,7 @@ import protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 public class ClientHeartbeatHandler extends ChannelDuplexHandler {
 
-  private final Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
+  private final static Logger logger = LoggerFactory.getLogger(ClientHeartbeatHandler.class);
   private int missedLimit, missCount = 0, expectedInterval;
 
   /**

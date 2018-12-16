@@ -33,7 +33,7 @@ public class Server implements MessageHandlerListener {
   private ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>> channelConnectionMap;
   private ConcurrentHashMap<InetSocketAddress, Integer> remoteHostToChannelMap;
 
-  private final Logger logger = LoggerFactory.getLogger(Server.class);
+  private final static Logger logger = LoggerFactory.getLogger(Server.class);
 
   public Server() {
     configure();

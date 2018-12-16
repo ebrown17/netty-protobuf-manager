@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 public class Client implements MessageReader {
-  private final Logger logger = LoggerFactory.getLogger(Client.class);
+  private final static Logger logger = LoggerFactory.getLogger(Client.class);
 
   private InetSocketAddress serverAddress;
   private Bootstrap bootstrap;
@@ -152,7 +152,7 @@ public class Client implements MessageReader {
   }
 
   public boolean isActive() {
-    return (channel != null && (channel.isOpen() || channel.isActive()));
+    return channel != null && (channel.isOpen() || channel.isActive());
   }
 
 }

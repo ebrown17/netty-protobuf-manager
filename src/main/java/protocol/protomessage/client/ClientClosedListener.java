@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 
 public class ClientClosedListener implements ChannelFutureListener {
-  private final Logger logger = LoggerFactory.getLogger(ClientClosedListener.class);
+  private final static Logger logger = LoggerFactory.getLogger(ClientClosedListener.class);
   private Client client;
 
   public ClientClosedListener(Client client) {
@@ -27,7 +27,7 @@ public class ClientClosedListener implements ChannelFutureListener {
           client.connect();
         }
         catch (InterruptedException e) {
-          // TODO test to see what happens if this is reached
+          logger.error("operationComplete {}",e.getMessage(),e);
           throw new RuntimeException("Interrupted trying to connect");
         }
       }, client.calculateRetryTime(), TimeUnit.SECONDS);

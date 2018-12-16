@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MessageTransceiver {
-  private final Logger logger = LoggerFactory.getLogger(MessageTransceiver.class);
+  private final static Logger logger = LoggerFactory.getLogger(MessageTransceiver.class);
   private final ConcurrentHashMap<InetSocketAddress, MessageHandler> activeHandlers;
   private final ConcurrentHashMap<InetSocketAddress, MessageReader> channelReaders;
   private final ArrayList<MessageHandlerListener> handlerListeners;

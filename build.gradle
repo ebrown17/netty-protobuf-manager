@@ -46,12 +46,12 @@ pmd {
   ignoreFailures = true
   sourceSets = [sourceSets.main]
   ruleSets = ["java-basic","java-braces","java-clone",
-              "java-codesize","java-comments",
-              "java-controversial",//"java-coupling",
+              "java-codesize",//"java-comments",
+              //"java-controversial",//"java-coupling",
               "java-design","java-empty","java-finalizers",
-              "java-imports","java-j2ee","java-javabeans",
+              "java-imports","java-j2ee",//"java-javabeans",
               "java-junit","java-logging-jakarta-commons",
-              "java-logging-java","java-naming",
+              "java-logging-java",//"java-naming",
               "java-optimizations","java-strictexception",
               "java-strings","java-sunsecure",
               "java-typeresolution","java-unnecessary",

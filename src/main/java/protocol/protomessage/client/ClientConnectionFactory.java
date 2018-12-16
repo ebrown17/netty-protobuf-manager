@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientConnectionFactory {
 
-  private final Logger logger = LoggerFactory.getLogger(ClientConnectionFactory.class);
+  private final static Logger logger = LoggerFactory.getLogger(ClientConnectionFactory.class);
 
   private EventLoopGroup workerGroup;
   private Class<? extends Channel> channelClass;
