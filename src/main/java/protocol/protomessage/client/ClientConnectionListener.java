@@ -8,7 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ClientConnectionListener implements ChannelFutureListener {
 
-  private Client client;
+  private final Client client;
   private boolean attemptingConnection = true;
 
   public ClientConnectionListener(Client client) {

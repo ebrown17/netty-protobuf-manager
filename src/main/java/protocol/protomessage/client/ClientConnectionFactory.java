@@ -18,9 +18,9 @@ public class ClientConnectionFactory {
 
   private final static Logger logger = LoggerFactory.getLogger(ClientConnectionFactory.class);
 
-  private EventLoopGroup workerGroup;
-  private Class<? extends Channel> channelClass;
-  private PooledByteBufAllocator allocator;
+  private final EventLoopGroup workerGroup;
+  private final Class<? extends Channel> channelClass;
+  private final PooledByteBufAllocator allocator;
   private final HashMap<Integer, MessageTransceiver> transceiverMap;
 
   public ClientConnectionFactory() {
