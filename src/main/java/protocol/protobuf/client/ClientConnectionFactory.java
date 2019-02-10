@@ -1,4 +1,4 @@
-package protocol.protomessage.client;
+package protocol.protobuf.client;
 
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -8,11 +8,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.protomessage.MessageTransceiver;
+import protocol.protobuf.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientConnectionFactory {
 

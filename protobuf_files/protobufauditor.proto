@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package protobuf.displaydata;
 
-option java_package="protobuf";
+option java_package = "protocol.protobuf";
 option java_outer_classname = "JdssAuditor";
 
 message DisplayData {
-    
+
     AuditorMessageType messageType = 1;
     int32 platform = 2;
     BoardingAdvice boardingAdvice = 3;
@@ -19,7 +19,7 @@ message DisplayData {
     Info info = 10;
     OutOfService outOfService = 11;
     HeartBeat hearBeat = 12;
-    
+
     enum AuditorMessageType {
         UNKNOWN = 0;
         BOARDING_ADVICE = 1;
@@ -32,7 +32,7 @@ message DisplayData {
         INFO = 8;
         OUT_OF_SERVICE = 9;
         HEARTBEAT = 10;
-    } 
+    }
     message BoardingAdvice {
         string advice = 1;
     }
@@ -61,7 +61,7 @@ message DisplayData {
     }
     message OutOfService {
         string outOfService = 1;
-    } 
+    }
     message Eta {
         string destination = 1;
         int32 length = 2;
@@ -70,6 +70,6 @@ message DisplayData {
     }
     message HeartBeat {
         string time = 1;
-    }   
-    
+    }
+
 }

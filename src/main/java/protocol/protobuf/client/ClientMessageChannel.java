@@ -1,4 +1,4 @@
-package protocol.protomessage.client;
+package protocol.protobuf.client;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
@@ -8,10 +8,10 @@ import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.IdleStateHandler;
-import protobuf.ProtoMessages.ProtoMessage;
-import protocol.protomessage.ExceptionHandler;
-import protocol.protomessage.MessageHandler;
-import protocol.protomessage.MessageTransceiver;
+import protocol.protobuf.ProtoMessages.ProtoMessage;
+import protocol.protobuf.ExceptionHandler;
+import protocol.protobuf.MessageHandler;
+import protocol.protobuf.MessageTransceiver;
 
 import java.util.concurrent.atomic.AtomicLong;
 

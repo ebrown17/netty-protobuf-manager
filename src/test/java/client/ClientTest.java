@@ -2,8 +2,8 @@ package client;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protocol.protomessage.client.Client;
-import protocol.protomessage.client.ClientConnectionFactory;
+import protocol.protobuf.client.Client;
+import protocol.protobuf.client.ClientConnectionFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

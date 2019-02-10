@@ -1,11 +1,11 @@
-package protocol.protomessage;
+package protocol.protobuf;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages.ProtoMessage;
-import protobuf.ProtoMessages.ProtoMessage.MessageType;
+import protocol.protobuf.ProtoMessages.ProtoMessage;
+import protocol.protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 import java.net.InetSocketAddress;
 

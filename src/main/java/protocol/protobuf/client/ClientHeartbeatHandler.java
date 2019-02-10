@@ -1,14 +1,13 @@
-package protocol.protomessage.client;
+package protocol.protobuf.client;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages.ProtoMessage;
-import protobuf.ProtoMessages.ProtoMessage.MessageType;
+import protocol.protobuf.ProtoMessages.ProtoMessage;
+import protocol.protobuf.ProtoMessages.ProtoMessage.MessageType;
 
 public class ClientHeartbeatHandler extends ChannelDuplexHandler {
 

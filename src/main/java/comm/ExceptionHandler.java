@@ -1,18 +1,16 @@
-package protocol.protomessage;
+package comm;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages.ProtoMessage;
 
 public class ExceptionHandler extends ChannelDuplexHandler {
-  private final static Logger logger = LoggerFactory.getLogger(ExceptionHandler.class);
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   @Override
-  public void channelRead(final ChannelHandlerContext ctx, final Object msg) throws Exception {
-    ProtoMessage message = ((ProtoMessage) msg);
-    logger.warn("channelRead: end of pipeline reached without handling: {}", message.toString());
+  public void channelRead(final ChannelHandlerContext ctx, final Object message) throws Exception {
+      logger.warn("channelRead: end of pipeline reached without handling: {}", message.toString());
   }
 
   @Override
@@ -20,5 +18,4 @@ public class ExceptionHandler extends ChannelDuplexHandler {
     logger.warn("Exception in connection from {} cause {}", ctx.channel().remoteAddress(), cause.toString());
     ctx.close();
   }
-
 }

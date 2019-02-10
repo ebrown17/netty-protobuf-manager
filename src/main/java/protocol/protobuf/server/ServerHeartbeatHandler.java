@@ -1,4 +1,4 @@
-package protocol.protomessage.server;
+package protocol.protobuf.server;
 
 import com.google.protobuf.Timestamp;
 import io.netty.channel.ChannelDuplexHandler;
@@ -7,10 +7,10 @@ import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages.ProtoMessage;
-import protobuf.ProtoMessages.ProtoMessage.HeartBeat;
-import protobuf.ProtoMessages.ProtoMessage.MessageType;
-import protocol.protomessage.MessageTransceiver;
+import protocol.protobuf.ProtoMessages.ProtoMessage;
+import protocol.protobuf.ProtoMessages.ProtoMessage.HeartBeat;
+import protocol.protobuf.ProtoMessages.ProtoMessage.MessageType;
+import protocol.protobuf.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 import java.util.Date;

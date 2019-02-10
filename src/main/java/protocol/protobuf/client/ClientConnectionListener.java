@@ -1,4 +1,4 @@
-package protocol.protomessage.client;
+package protocol.protobuf.client;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;

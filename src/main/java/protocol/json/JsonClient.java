@@ -10,7 +10,6 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import protocol.protomessage.client.ClientMessageChannel;
 
 import java.net.InetSocketAddress;
 

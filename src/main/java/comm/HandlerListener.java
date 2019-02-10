@@ -1,8 +1,8 @@
-package protocol.protomessage;
+package comm;
 
 import java.net.InetSocketAddress;
 
- public interface MessageHandlerListener {
+public interface HandlerListener<I> {
 
   void registerActiveHandler(int channelPort, InetSocketAddress remoteConnection);
 

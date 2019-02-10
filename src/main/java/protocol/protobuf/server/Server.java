@@ -1,4 +1,4 @@
-package protocol.protomessage.server;
+package protocol.protobuf.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -9,9 +9,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages.ProtoMessage;
-import protocol.protomessage.MessageHandlerListener;
-import protocol.protomessage.MessageTransceiver;
+import protocol.protobuf.ProtoMessages.ProtoMessage;
+import protocol.protobuf.MessageHandlerListener;
+import protocol.protobuf.MessageTransceiver;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;

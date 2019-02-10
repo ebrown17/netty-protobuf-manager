@@ -1,6 +1,6 @@
-package protocol.protomessage;
+package protocol.protobuf;
 
-import protobuf.ProtoMessages.ProtoMessage;
+import protocol.protobuf.ProtoMessages.ProtoMessage;
 
 import java.net.InetSocketAddress;
 

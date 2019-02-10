@@ -1,13 +1,13 @@
-package protocol.protomessage;
+package protocol.protobuf;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import protobuf.ProtoMessages.ProtoMessage;
-import protocol.protomessage.client.Client;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+
+import protocol.protobuf.ProtoMessages.ProtoMessage;
 
 public class MessageTransceiver {
   private final static Logger logger = LoggerFactory.getLogger(MessageTransceiver.class);
