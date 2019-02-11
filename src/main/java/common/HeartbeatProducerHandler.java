@@ -1,19 +1,24 @@
-package comm;
+package common;
 
-import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
-public abstract class HeartbeatProducerHandler<I> extends ChannelDuplexHandler {
+public abstract class HeartbeatProducerHandler<I> extends IdleStateHandler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
-  private final Transceiver<Class<? extends I>> transceiver;
+  private final Transceiver<I> transceiver;
 
-  HeartbeatProducerHandler(Transceiver<Class<? extends I>> transceiver) {
+  HeartbeatProducerHandler(int readerIdleTimeSeconds,
+                           int writerIdleTimeSeconds,
+                           int allIdleTimeSeconds,
+                           Transceiver<I> transceiver) {
+
+    super(readerIdleTimeSeconds, writerIdleTimeSeconds, allIdleTimeSeconds);
     this.transceiver = transceiver;
   }
 
@@ -28,6 +33,6 @@ public abstract class HeartbeatProducerHandler<I> extends ChannelDuplexHandler {
     }
   }
 
-  abstract Class<? extends Class<? extends I>> generateHeartBeat();
+  abstract I generateHeartBeat();
 
 }

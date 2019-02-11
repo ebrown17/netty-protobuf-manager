@@ -1,4 +1,4 @@
-package comm;
+package common;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,25 +7,25 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class Transceiver<I> {
+public class Transceiver<I> {
 
-  private final Logger logger = LoggerFactory.getLogger(getClass());
-  private final ConcurrentHashMap<InetSocketAddress, Handler<Class<? extends I>>> activeHandlers;
-  private final ConcurrentHashMap<InetSocketAddress, Reader<Class<? extends I>>> channelReaders;
-  private final ArrayList<HandlerListener<Class<? extends I>>> handlerListeners;
-  private final Object activeLock = new Object();
-  private final int channelPort;
+  final Logger logger = LoggerFactory.getLogger(getClass());
+  final ConcurrentHashMap<InetSocketAddress, Handler<I>> activeHandlers;
+  final ConcurrentHashMap<InetSocketAddress, Reader<Class<? extends I>>> channelReaders;
+  final ArrayList<HandlerListener<Class<? extends I>>> handlerListeners;
+  final Object activeLock = new Object();
+  final int channelPort;
 
   public Transceiver(int channelPort) {
-    activeHandlers = new ConcurrentHashMap<InetSocketAddress, Handler<Class<? extends I>>>();
+    activeHandlers = new ConcurrentHashMap<InetSocketAddress, Handler<I>>();
     channelReaders = new ConcurrentHashMap<InetSocketAddress, Reader<Class<? extends I>>>();
     handlerListeners = new ArrayList<HandlerListener<Class<? extends I>>>();
     this.channelPort = channelPort;
   }
 
-  protected void handlerActive(InetSocketAddress addr, Handler<Class<? extends I>> handler) {
+  protected void handlerActive(InetSocketAddress addr, Handler<I> handler) {
     synchronized (activeLock) {
-      Handler<Class<? extends I>> activeHandler = activeHandlers.get(addr);
+      Handler<I> activeHandler = activeHandlers.get(addr);
       if(activeHandler == null){
         activeHandlers.putIfAbsent(addr,handler);
         handlerListeners.forEach(listener -> listener.registerActiveHandler(channelPort, addr));
@@ -49,7 +49,7 @@ public abstract class Transceiver<I> {
     }
   }
 
-  public void registerChannelReader(InetSocketAddress addr, Reader<Class<? extends I>> reader){
+  public void registerChannelReader(InetSocketAddress addr, Reader reader){
     channelReaders.putIfAbsent(addr,reader);
   }
 
@@ -59,19 +59,28 @@ public abstract class Transceiver<I> {
     }
   }
 
-  public void sendMessage(InetSocketAddress addr,Class<? extends I>message) {
+  /**
+   * Sends a message to specified address if connected to this transceiver
+   * @param addr
+   * @param message
+   */
+  public void sendMessage(InetSocketAddress addr,I message) {
     synchronized (activeLock) {
       logger.trace("sendMessage to addr: {} with {}", addr, message);
-      Handler<Class<? extends I>> handler = activeHandlers.get(addr);
+      Handler<I> handler = activeHandlers.get(addr);
       if (handler != null) {
         handler.sendMessage(message);
       }
     }
   }
 
-  public void broadcastMessage(Class<? extends I> message) {
+  /**
+   * Broadcast a message on all channels connected to this port's transceiver
+   * @param message
+   */
+  public void broadcastMessage(I message) {
     synchronized (activeLock) {
-      for (Handler<Class<? extends I>> handler : activeHandlers.values()) {
+      for (Handler<I> handler : activeHandlers.values()) {
         handler.sendMessage(message);
       }
     }

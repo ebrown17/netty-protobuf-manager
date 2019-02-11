@@ -1,4 +1,4 @@
-package comm;
+package common;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
