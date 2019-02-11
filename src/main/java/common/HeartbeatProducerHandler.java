@@ -13,7 +13,7 @@ public abstract class HeartbeatProducerHandler<I> extends IdleStateHandler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private final Transceiver<I> transceiver;
 
-  HeartbeatProducerHandler(int readerIdleTimeSeconds,
+  public HeartbeatProducerHandler(int readerIdleTimeSeconds,
                            int writerIdleTimeSeconds,
                            int allIdleTimeSeconds,
                            Transceiver<I> transceiver) {
@@ -33,6 +33,6 @@ public abstract class HeartbeatProducerHandler<I> extends IdleStateHandler {
     }
   }
 
-  abstract I generateHeartBeat();
+  public abstract I generateHeartBeat();
 
 }

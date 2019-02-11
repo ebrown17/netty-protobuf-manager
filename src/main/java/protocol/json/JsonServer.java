@@ -1,5 +1,9 @@
 package protocol.json;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import common.Transceiver;
+import common.TransceiverChannel;
+import common.server.Server;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -12,62 +16,34 @@ import org.slf4j.LoggerFactory;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
 
-public class JsonServer {
-    private EventLoopGroup bossGroup;
-    private EventLoopGroup workerGroup;
-    private ServerBootstrap bootstrap;
-    private static final int INITIAL_CHANNEL_LIMIT = 5;
-
+public class JsonServer  extends Server<JsonNode> {
 
     private final static Logger logger = LoggerFactory.getLogger(JsonServer.class);
 
-    public JsonServer(){
-        ThreadFactory threadFactory = new DefaultThreadFactory("server");
-        // the bossGroup will handle all incoming connections and pass them off to the workerGroup
-        // the workerGroup will be used for processing all channels
-        // 0 forces netty to use default number of threads which is max number of processors * 2
-        bossGroup = new NioEventLoopGroup(1, threadFactory);
-        workerGroup = new NioEventLoopGroup(0, threadFactory);
-        bootstrap = new ServerBootstrap();
-        bootstrap.group(bossGroup, workerGroup);
-        bootstrap.channel(NioServerSocketChannel.class);
-        bootstrap.option(ChannelOption.SO_BACKLOG, 25);
-        bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true);
-        bootstrap.childOption(ChannelOption.TCP_NODELAY, true);
-        bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
-        bootstrap.childHandler(new ServerJsonChannel());
-
-        int port = 6666;
-        ChannelFuture channelFuture = bootstrap.bind(new InetSocketAddress(port));
-
-        try {
-            channelFuture.await();
-        }
-        catch (InterruptedException e) {
-            throw new RuntimeException("Interrupted waiting for bind");
-        }
-        if (!channelFuture.isSuccess()) {
-            logger.error("startChannel failed to bind to port {} ", port);
-        }
-        else {
-            logger.debug("startChannel now listening for connections on port {}", port);
-            Channel channel = channelFuture.channel();
-
-            ChannelFutureListener closeListener = future -> {
-                logger.info("channel {} closed unexpectedly, closed with {}", port, future.cause());
-                channel.close();
-            };
-
-
-            channel.closeFuture().addListener(closeListener);
-
-        }
+    public JsonServer() {
+        super();
     }
 
+    @Override
+    public boolean createChannel(int port) {
+        Transceiver<JsonNode> transceiver = new Transceiver<JsonNode>(port);
+        JsonServerChannel channel = new JsonServerChannel(transceiver);
+
+        return  addChannel(port,transceiver,channel);
+
+    }
+
+    @Override
+    public void readMessage(InetSocketAddress addr, JsonNode message) {
+
+    }
 
     public static void main(String... args){
 
         JsonServer server = new JsonServer();
+        server.createChannel(6666);
+
+        server.startServer();
 
         JsonClient client = new JsonClient();
 
@@ -78,4 +54,6 @@ public class JsonServer {
         }
 
     }
+
+
 }
