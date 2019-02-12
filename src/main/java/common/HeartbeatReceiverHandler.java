@@ -24,7 +24,7 @@ public class HeartbeatReceiverHandler extends IdleStateHandler {
    * method and add appropriate logic. The method
    * {@link HeartbeatReceiverHandler#resetMissCounter() resetMissCounter } can be called reset the miss count.
    *
-   * @param expectedInterval The expected heartbeat interval. This will be used to determine if server
+   * @param expectedInterval The expected heartbeat interval in seconds. This will be used to determine if server
    *                         is no longer alive.
    * @param missedLimit      The max amount of heartbeats allowed until handler closes channel.
    */

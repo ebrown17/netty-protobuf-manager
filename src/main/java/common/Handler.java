@@ -11,18 +11,18 @@ public abstract class Handler<I> extends SimpleChannelInboundHandler<I> {
 
   private ChannelHandlerContext ctx;
   private final Logger logger = LoggerFactory.getLogger(getClass());
-  private InetSocketAddress remoteAddress;
-  private final Transceiver<? extends I>transceiver;
+  public InetSocketAddress remoteAddress;
+  private final Transceiver<I> transceiver;
   private final Long handlerId;
 
-  public Handler(Long id, Transceiver<? extends I> transceiver){
+  public Handler(Long id, Transceiver<I> transceiver){
     handlerId=id;
     this.transceiver = transceiver;
   }
 
   public void sendMessage(I message) {
     if (ctx != null && ctx.channel().isActive() && ctx.channel().isWritable()) {
-      logger.trace("sendMessage {} to {} written to wire",message.toString(),remoteAddress);
+      logger.info("sendMessage {} to {} written to wire",message.toString(),remoteAddress);
       ctx.writeAndFlush(message);
     }
     else {
@@ -35,7 +35,7 @@ public abstract class Handler<I> extends SimpleChannelInboundHandler<I> {
     logger.trace("channelActive remote peer: {} connected", ctx.channel().remoteAddress());
     this.ctx = ctx;
     remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-    //transceiver.handlerActive(remoteAddress, this);
+    transceiver.handlerActive(remoteAddress, this);
   }
 
   @Override

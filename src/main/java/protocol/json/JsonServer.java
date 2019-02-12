@@ -1,20 +1,14 @@
 package protocol.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import common.Transceiver;
-import common.TransceiverChannel;
 import common.server.Server;
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
-import java.util.concurrent.ThreadFactory;
 
 public class JsonServer  extends Server<JsonNode> {
 
@@ -45,10 +39,29 @@ public class JsonServer  extends Server<JsonNode> {
 
         server.startServer();
 
-        JsonClient client = new JsonClient();
+        JsonClientFactory factory = new JsonClientFactory();
+        JsonClient client = factory.createClient("localhost",6666,JsonClient.class);
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode parameters = mapper.createObjectNode();
+        ObjectNode main = mapper.createObjectNode();
+        main.put("eventType","trainEvent");
+        main.put("subtype","DOOR_OPEN");
+
+        parameters.put("serial",300);
+        parameters.put("length",10);
+        parameters.put("platform","A20-1");
+        parameters.put("dss_code", 55 );
+        main.set("parameters",parameters);
+
 
         try {
-            Thread.sleep(15000);
+            client.connect();
+            while(true) {
+                client.sendMessage(main);
+                Thread.sleep(5000);
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

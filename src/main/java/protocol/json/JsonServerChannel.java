@@ -20,7 +20,7 @@ public class JsonServerChannel extends TransceiverChannel<JsonNode> {
   protected void initChannel(SocketChannel ch) throws Exception {
     ChannelPipeline p = ch.pipeline();
     p.addLast("jsonCodec", new JsonJacksonCodec());
-    p.addLast("jsonHandler", new JsonHandler());
+    p.addLast("jsonHandler", new JsonHandler(channelIds.incrementAndGet(),transceiver));
     p.addLast("heartbeatHandler",new ServerHeartbeatHandler(transceiver));
     p.addLast(new ExceptionHandler());
   }

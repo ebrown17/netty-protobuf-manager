@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
-public abstract class Client<I> implements Reader<I>, Sender<I> {
+public abstract class Client<I> implements Reader<I> {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -30,7 +30,7 @@ public abstract class Client<I> implements Reader<I>, Sender<I> {
   private static final int TOTAL_MAX_RETRY_COUNT = 360;
 
   private InetSocketAddress serverAddress;
-  private Transceiver<? extends I> transceiver;
+  private Transceiver<I> transceiver;
   private Bootstrap bootstrap;
   private Channel channel;
 
@@ -40,7 +40,7 @@ public abstract class Client<I> implements Reader<I>, Sender<I> {
   private long initialRetryTime = 0;
   private boolean disconnectInitiated = true;
 
-  public <T extends TransceiverChannel> Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup, Transceiver<? extends I> transceiver, T clientChannel){
+  public <T extends TransceiverChannel> Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup, Transceiver<I> transceiver, T clientChannel){
     this.serverAddress = serverAddress;
     this.transceiver = transceiver;
     bootstrap = new Bootstrap();
@@ -128,6 +128,15 @@ public abstract class Client<I> implements Reader<I>, Sender<I> {
           retryTime / 1000L);
       return RETRY_TIME;
     }
+  }
+
+  public void sendMessage(I message) {
+    if (!isActive()) {
+      logger.warn("sendData can't send data on null or closed channel");
+      return;
+    }
+    logger.debug("sendData {} to remote host", message.toString(), channel.remoteAddress());
+    transceiver.sendMessage(serverAddress,message);
   }
 
   public Channel getChannel() {

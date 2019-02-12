@@ -11,14 +11,14 @@ public class Transceiver<I> {
 
   final Logger logger = LoggerFactory.getLogger(getClass());
   final ConcurrentHashMap<InetSocketAddress, Handler<I>> activeHandlers;
-  final ConcurrentHashMap<InetSocketAddress, Reader<Class<? extends I>>> channelReaders;
+  final ConcurrentHashMap<InetSocketAddress, Reader<I>> channelReaders;
   final ArrayList<HandlerListener<I>> handlerListeners;
   final Object activeLock = new Object();
   final int channelPort;
 
   public Transceiver(int channelPort) {
     activeHandlers = new ConcurrentHashMap<InetSocketAddress, Handler<I>>();
-    channelReaders = new ConcurrentHashMap<InetSocketAddress, Reader<Class<? extends I>>>();
+    channelReaders = new ConcurrentHashMap<InetSocketAddress, Reader<I>>();
     handlerListeners = new ArrayList<HandlerListener<I>>();
     this.channelPort = channelPort;
   }
@@ -41,9 +41,9 @@ public class Transceiver<I> {
     }
   }
 
-  protected void handleMessage(InetSocketAddress addr, Class<? extends I> message) {
+  public void handleMessage(InetSocketAddress addr, I message) {
     logger.trace("handleMessage from {} with {}", addr, message);
-    Reader<Class<? extends I>> reader = channelReaders.get(addr);
+    Reader<I> reader = channelReaders.get(addr);
     if(reader != null){
       reader.readMessage(addr,message);
     }
