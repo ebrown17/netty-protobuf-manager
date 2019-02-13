@@ -11,7 +11,7 @@ public abstract class Handler<I> extends SimpleChannelInboundHandler<I> {
 
   private ChannelHandlerContext ctx;
   private final Logger logger = LoggerFactory.getLogger(getClass());
-  public InetSocketAddress remoteAddress;
+  protected InetSocketAddress remoteAddress;
   private final Transceiver<I> transceiver;
   private final Long handlerId;
 

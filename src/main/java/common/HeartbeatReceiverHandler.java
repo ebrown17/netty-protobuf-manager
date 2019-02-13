@@ -4,12 +4,10 @@ import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
-import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HeartbeatReceiverHandler extends IdleStateHandler {
-
+public abstract class HeartbeatReceiverHandler<I> extends ChannelDuplexHandler {
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private int missedLimit, missCount = 0, expectedInterval;
@@ -28,22 +26,17 @@ public class HeartbeatReceiverHandler extends IdleStateHandler {
    *                         is no longer alive.
    * @param missedLimit      The max amount of heartbeats allowed until handler closes channel.
    */
-  public HeartbeatReceiverHandler(int readerIdleTimeSeconds,
-                                  int writerIdleTimeSeconds,
-                                  int allIdleTimeSeconds,
-                                  int expectedInterval,
-                                  int missedLimit) {
-    super(readerIdleTimeSeconds, writerIdleTimeSeconds, allIdleTimeSeconds);
+  public HeartbeatReceiverHandler(int expectedInterval,int missedLimit) {
     this.expectedInterval = expectedInterval;
     this.missedLimit = missedLimit;
   }
 
   @Override
   public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
-    logger.debug("userEventTriggered");
+    logger.trace("userEventTriggered");
     if (evt instanceof IdleStateEvent) {
       IdleStateEvent e = (IdleStateEvent) evt;
-      logger.debug("userEventTriggered {} miss count {}", e.state(), missCount);
+      logger.trace("userEventTriggered {} miss count {}", e.state(), missCount);
 
       if (e.state() == IdleState.READER_IDLE) {
         if (missCount >= missedLimit) {
@@ -56,14 +49,6 @@ public class HeartbeatReceiverHandler extends IdleStateHandler {
         }
       }
     }
-  }
-
-  @Override
-  public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    logger.debug("channelRead received {} from {}", msg.toString(), ctx.channel().remoteAddress());
-    resetMissCounter();
-    ctx.fireChannelRead(msg);
-
   }
 
   /**

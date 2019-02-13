@@ -9,12 +9,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class Transceiver<I> {
 
-  final Logger logger = LoggerFactory.getLogger(getClass());
-  final ConcurrentHashMap<InetSocketAddress, Handler<I>> activeHandlers;
-  final ConcurrentHashMap<InetSocketAddress, Reader<I>> channelReaders;
-  final ArrayList<HandlerListener<I>> handlerListeners;
-  final Object activeLock = new Object();
-  final int channelPort;
+  final private Logger logger = LoggerFactory.getLogger(getClass());
+  final protected ConcurrentHashMap<InetSocketAddress, Handler<I>> activeHandlers;
+  final protected ConcurrentHashMap<InetSocketAddress, Reader<I>> channelReaders;
+  final protected ArrayList<HandlerListener<I>> handlerListeners;
+  final protected Object activeLock = new Object();
+  final protected int channelPort;
 
   public Transceiver(int channelPort) {
     activeHandlers = new ConcurrentHashMap<InetSocketAddress, Handler<I>>();
@@ -24,6 +24,7 @@ public class Transceiver<I> {
   }
 
   protected void handlerActive(InetSocketAddress addr, Handler<I> handler) {
+    logger.info("handlerActive handler active  remote: {}", addr);
     synchronized (activeLock) {
       Handler<I> activeHandler = activeHandlers.get(addr);
       if(activeHandler == null){
@@ -34,7 +35,7 @@ public class Transceiver<I> {
   }
 
   protected void handlerInActive(InetSocketAddress addr) {
-    logger.info("registerHandlerInActive handler inactive with addr: {}", addr);
+    logger.info("registerHandlerInActive handler inactive, remote: {}", addr);
     synchronized (activeLock) {
       activeHandlers.remove(addr);
       handlerListeners.forEach(listener -> listener.registerInActiveHandler(channelPort, addr));

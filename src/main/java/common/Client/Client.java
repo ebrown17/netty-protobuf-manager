@@ -1,9 +1,7 @@
 package common.Client;
 
 import common.Reader;
-import common.Sender;
 import common.Transceiver;
-import common.TransceiverChannel;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -40,16 +38,16 @@ public abstract class Client<I> implements Reader<I> {
   private long initialRetryTime = 0;
   private boolean disconnectInitiated = true;
 
-  public <T extends TransceiverChannel> Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup, Transceiver<I> transceiver, T clientChannel){
+  public <T extends TransceiverClientChannel> Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup, Transceiver<I> transceiver, T clientChannel){
     this.serverAddress = serverAddress;
     this.transceiver = transceiver;
     bootstrap = new Bootstrap();
     bootstrap.group(sharedWorkerGroup);
     bootstrap.channel(NioSocketChannel.class);
-    bootstrap.handler(clientChannel);
     bootstrap.option(ChannelOption.TCP_NODELAY, true);
     bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
     bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+    bootstrap.handler(clientChannel);
   }
 
   public void connect() throws InterruptedException {

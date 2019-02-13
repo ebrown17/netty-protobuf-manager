@@ -5,7 +5,6 @@ import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import org.slf4j.Logger;
@@ -60,9 +59,16 @@ public abstract class Server<I> implements HandlerListener<I>, Reader<I> {
     bootstrap.childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
   }
 
-  public abstract boolean createChannel(int port);
+  /**
+   *  Must build the proper transceiver type and channel to be used.
+   *  Then the can call  {@link Server#addChannel(int port, Transceiver<I> transceiver, TransceiverServerChannel<I> tChannel) }
+   *  will create the channel
+   * @param port
+   * @return
+   */
+  public abstract boolean addChannel(int port);
 
-  public boolean addChannel(int port, Transceiver<I> transceiver, TransceiverChannel<I> tChannel) {
+  protected boolean addChannel(int port, Transceiver<I> transceiver, TransceiverServerChannel<I> tChannel) {
     try {
       if (portAddressMap.get(port) == null) {
         InetSocketAddress sockAddr = new InetSocketAddress(port);
@@ -252,6 +258,11 @@ public abstract class Server<I> implements HandlerListener<I>, Reader<I> {
     transceiverMap.forEachValue(1, transceiver -> transceiver.broadcastMessage(message));
   }
 
+  /**
+   *  Sends a message to specified host
+   * @param addr
+   * @param message
+   */
   public void sendMessage(InetSocketAddress addr, I message) {
     int channelPort = remoteHostToChannelMap.get(addr);
     Transceiver<I> transceiver = transceiverMap.get(channelPort);

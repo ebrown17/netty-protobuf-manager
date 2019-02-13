@@ -1,14 +1,14 @@
 package protocol.json;
 
+import common.ExceptionHandler;
 import common.Transceiver;
-import common.TransceiverChannel;
+import common.server.TransceiverServerChannel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.netty.handler.timeout.IdleStateHandler;
-import protocol.protobuf.ExceptionHandler;
 
-public class JsonServerChannel extends TransceiverChannel<JsonNode> {
+public class JsonServerChannel extends TransceiverServerChannel<JsonNode> {
   private final Transceiver<JsonNode> transceiver;
 
   public JsonServerChannel(Transceiver<JsonNode> transceiver){
@@ -22,7 +22,7 @@ public class JsonServerChannel extends TransceiverChannel<JsonNode> {
     p.addLast("jsonCodec", new JsonJacksonCodec());
     p.addLast("jsonHandler", new JsonHandler(channelIds.incrementAndGet(),transceiver));
     p.addLast("idleStateHandler",new IdleStateHandler(0,WRITE_IDLE_TIME,0));
-    p.addLast("heartbeatHandler",new ServerHeartbeatHandler(transceiver));
+    p.addLast("heartbeatHandler",new JsonHeartbeatProducer(transceiver));
     p.addLast(new ExceptionHandler());
   }
 }

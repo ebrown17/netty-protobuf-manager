@@ -36,5 +36,5 @@ public abstract class ClientFactory<I> {
         return clientType.cast(createClient(address, transceiver));
     }
 
-    public abstract Client<I> createClient(InetSocketAddress address, Transceiver<I> transceiver);
+    protected abstract Client<I> createClient(InetSocketAddress address, Transceiver<I> transceiver);
 }

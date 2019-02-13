@@ -7,8 +7,6 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
-import io.netty.handler.codec.MessageToByteEncoder;
-import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +19,7 @@ public class JsonJacksonCodec extends ByteToMessageCodec<JsonNode> {
 
     private final static Logger logger = LoggerFactory.getLogger(JsonJacksonCodec.class);
 
-    private ObjectMapper mapper;
+    private final ObjectMapper mapper;
 
     public JsonJacksonCodec() {
         mapper = new ObjectMapper();

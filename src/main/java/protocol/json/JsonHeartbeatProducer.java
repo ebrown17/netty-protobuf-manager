@@ -8,13 +8,13 @@ import common.Transceiver;
 
 import java.util.Date;
 
-public class ServerHeartbeatHandler extends HeartbeatProducerHandler<JsonNode> {
+public class JsonHeartbeatProducer extends HeartbeatProducerHandler<JsonNode> {
 
   private final ObjectMapper mapper;
   private final ObjectNode heartbeat;
   private final ObjectNode parameters;
 
-  public ServerHeartbeatHandler(Transceiver<JsonNode> transceiver){
+  public JsonHeartbeatProducer(Transceiver<JsonNode> transceiver){
     super(transceiver);
     mapper = new ObjectMapper();
     heartbeat = mapper.createObjectNode();
