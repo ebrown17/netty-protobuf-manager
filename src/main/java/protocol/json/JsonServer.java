@@ -30,13 +30,13 @@ public class JsonServer  extends Server<JsonNode> {
     @Override
     public void readMessage(InetSocketAddress addr, JsonNode message) {
 
+
     }
 
     public static void main(String... args){
 
         JsonServer server = new JsonServer();
         server.createChannel(6666);
-
         server.startServer();
 
         JsonClientFactory factory = new JsonClientFactory();

@@ -28,11 +28,4 @@ public class JsonClient extends Client<JsonNode> {
         logger.info("readMessage {} sent: {} ", addr.getHostName(), message.toString());
     }
 
-    @Override
-    public void sendMessage(JsonNode message) {
-        if (isActive()) {
-            logger.info("sendMessage {}", message.toString());
-            transceiver.sendMessage(serverAddress, message);
-        }
-    }
 }

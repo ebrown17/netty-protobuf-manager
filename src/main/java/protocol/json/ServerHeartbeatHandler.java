@@ -9,19 +9,23 @@ import common.Transceiver;
 import java.util.Date;
 
 public class ServerHeartbeatHandler extends HeartbeatProducerHandler<JsonNode> {
-  private static final int WRITE_IDLE_TIME = 5;
+
   private final ObjectMapper mapper;
   private final ObjectNode heartbeat;
+  private final ObjectNode parameters;
 
   public ServerHeartbeatHandler(Transceiver<JsonNode> transceiver){
-    super(0,WRITE_IDLE_TIME,0,transceiver);
+    super(transceiver);
     mapper = new ObjectMapper();
     heartbeat = mapper.createObjectNode();
+    parameters = mapper.createObjectNode();
   }
 
   @Override
   public JsonNode generateHeartBeat() {
-    heartbeat.put("heartbeat",new Date().getTime());
+    heartbeat.put("eventType","heartbeat");
+    parameters.put("sent",new Date().getTime());
+    heartbeat.set("parameters",parameters);
     return heartbeat;
   }
 }

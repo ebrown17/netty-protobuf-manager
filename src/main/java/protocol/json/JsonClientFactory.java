@@ -9,10 +9,6 @@ import java.net.InetSocketAddress;
 
 public class JsonClientFactory extends ClientFactory<JsonNode> {
 
-    public JsonClientFactory(){
-        super();
-    }
-
     @Override
     public JsonClient createClient(InetSocketAddress address, Transceiver<JsonNode> transceiver) {
         return new JsonClient(address,workerGroup, transceiver,new JsonClientChannel(transceiver));

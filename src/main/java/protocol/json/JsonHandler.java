@@ -4,11 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import common.Handler;
 import common.Transceiver;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.net.InetSocketAddress;
 
 public class JsonHandler extends Handler<JsonNode> {
 

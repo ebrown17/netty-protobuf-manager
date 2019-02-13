@@ -1,5 +1,6 @@
 package common;
 
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
@@ -9,16 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import java.net.InetSocketAddress;
 
-public abstract class HeartbeatProducerHandler<I> extends IdleStateHandler {
+public abstract class HeartbeatProducerHandler<I> extends ChannelDuplexHandler {
   private final Logger logger = LoggerFactory.getLogger(getClass());
   private final Transceiver<I> transceiver;
 
-  public HeartbeatProducerHandler(int readerIdleTimeSeconds,
-                           int writerIdleTimeSeconds,
-                           int allIdleTimeSeconds,
-                           Transceiver<I> transceiver) {
-
-    super(readerIdleTimeSeconds, writerIdleTimeSeconds, allIdleTimeSeconds);
+  public HeartbeatProducerHandler(Transceiver<I> transceiver) {
     this.transceiver = transceiver;
   }
 
@@ -27,7 +23,7 @@ public abstract class HeartbeatProducerHandler<I> extends IdleStateHandler {
     if (evt instanceof IdleStateEvent) {
       IdleStateEvent e = (IdleStateEvent) evt;
       if (e.state() == IdleState.WRITER_IDLE) {
-        logger.trace("userEventTriggered sendheartBeat");
+        logger.info("userEventTriggered sendheartBeat");
         transceiver.sendMessage((InetSocketAddress) ctx.channel().remoteAddress(),  generateHeartBeat());
       }
     }

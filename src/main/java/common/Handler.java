@@ -22,7 +22,7 @@ public abstract class Handler<I> extends SimpleChannelInboundHandler<I> {
 
   public void sendMessage(I message) {
     if (ctx != null && ctx.channel().isActive() && ctx.channel().isWritable()) {
-      logger.info("sendMessage {} to {} written to wire",message.toString(),remoteAddress);
+      logger.trace("sendMessage {} to {} written to wire",message.toString(),remoteAddress);
       ctx.writeAndFlush(message);
     }
     else {
