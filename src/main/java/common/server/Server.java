@@ -30,6 +30,7 @@ public abstract class Server<I> implements HandlerListener<I>, Reader<I> {
   private ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>> channelConnectionMap;
   private ConcurrentHashMap<InetSocketAddress, Integer> remoteHostToChannelMap;
 
+
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
   public Server() {
@@ -213,7 +214,13 @@ public abstract class Server<I> implements HandlerListener<I>, Reader<I> {
       channelConnections.add(remoteConnection);
       remoteHostToChannelMap.put(remoteConnection, channelPort);
     }
+    Transceiver<I> transceiver = transceiverMap.get(channelPort);
+    if(transceiver != null){
+      transceiver.registerChannelReader(remoteConnection,this);
+    }
     channelConnectionMap.put(channelPort, channelConnections);
+
+
   }
 
   @Override

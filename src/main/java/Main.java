@@ -1,10 +1,17 @@
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import common.ReadListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import protocol.json.JsonClient;
 import protocol.json.JsonClientFactory;
 import protocol.json.JsonServer;
 
+import java.net.InetSocketAddress;
+
 public class Main {
+
+    private final static Logger logger = LoggerFactory.getLogger(Main.class);
 
     public static void main(String... args){
         // How to use the server and client classes
@@ -12,6 +19,8 @@ public class Main {
         JsonServer server = new JsonServer();
         server.addChannel(6666);
         server.startServer();
+
+        server.registerReadListener((addr, message) -> logger.info("xxxx {} ", message.toString()));
 
         JsonClientFactory factory = new JsonClientFactory();
         JsonClient client = factory.createClient("localhost",6666,JsonClient.class);

@@ -28,6 +28,8 @@ public class JsonClient extends Client<JsonNode> {
     @Override
     public void readMessage(InetSocketAddress addr, JsonNode message) {
         logger.info("readMessage {} sent: {} ", addr.getHostName(), message.toString());
+
+
     }
 
 }

@@ -43,14 +43,16 @@ public class Transceiver<I> {
   }
 
   public void handleMessage(InetSocketAddress addr, I message) {
-    logger.trace("handleMessage from {} with {}", addr, message);
+    logger.info("handleMessage from {} with {}", addr, message);
     Reader<I> reader = channelReaders.get(addr);
+    logger.info("handleMessage reader {} msg: {}",reader,message);
     if(reader != null){
+      logger.info("handleMessage reader {} msg: {}",reader,message);
       reader.readMessage(addr,message);
     }
   }
 
-  public void registerChannelReader(InetSocketAddress addr, Reader reader){
+  public void registerChannelReader(InetSocketAddress addr, Reader<I> reader){
     channelReaders.putIfAbsent(addr,reader);
   }
 
