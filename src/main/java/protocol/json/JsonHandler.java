@@ -22,7 +22,7 @@ public class JsonHandler extends Handler<JsonNode> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, JsonNode msg) throws Exception {
-        logger.info("channelRead0 from: {} received: {}", ctx.channel().remoteAddress(), msg);
+        logger.trace("channelRead0 from: {} received: {}", ctx.channel().remoteAddress(), msg);
         String types = msg.get("eventType").asText();
         if(types.equals("heartbeat")){
             ctx.fireChannelRead(msg);
@@ -30,8 +30,5 @@ public class JsonHandler extends Handler<JsonNode> {
         else{
             transceiver.handleMessage(remoteAddress, msg);
         }
-
     }
-
-
 }

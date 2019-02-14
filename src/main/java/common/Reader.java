@@ -9,4 +9,6 @@ public interface Reader<I> {
    * @param message Message received
    */
   void readMessage(InetSocketAddress addr, I message);
+
+  void registerReadListener(ReadListener<I> reader);
 }

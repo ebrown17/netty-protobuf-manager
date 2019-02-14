@@ -12,12 +12,12 @@ mainClassName = "Main"
 repositories { mavenCentral() }
 
 dependencies {
-  compile 'com.google.protobuf:protobuf-java:3.3.1'
-  compile 'org.codehaus.groovy:groovy-all:2.4.12'
-  compile 'io.netty:netty-all:4.1.33.Final'
-  compile 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
-  compile 'org.slf4j:slf4j-api:1.7.25'
-  compile 'ch.qos.logback:logback-classic:1.2.3'
+  implementation 'com.google.protobuf:protobuf-java:3.3.1'
+    implementation 'org.codehaus.groovy:groovy-all:2.4.12'
+    implementation 'io.netty:netty-all:4.1.33.Final'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'ch.qos.logback:logback-classic:1.2.3'
   testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
   
 }
@@ -28,12 +28,13 @@ spotbugs {
 	effort = "max"
 	reportLevel = "low"
 	excludeFilter = file("src/main/resources/spotbugs-exclude.xml")
+    spotbugsMain {
+        reports.xml.enabled = false
+        reports.html.enabled = true
+    }
+
 }
 
-spotbugsMain {
-	reports.xml.enabled = false
-	reports.html.enabled = true
-}
 
 pmd {
     ignoreFailures = true
@@ -47,19 +48,8 @@ pmd {
             "category/java/documentation.xml",
             "category/java/performance.xml"
     ]
-}
 
-
-pmdMain {
-    excludes = ["**/ProtoMessages.java"]
-}
-
-task asServer(type: JavaExec) {
-  classpath = sourceSets.test.runtimeClasspath + files('config')
-  main = "src.test.java.server.ServerTest"
-}
-
-task asClient(type: JavaExec) {
-  classpath sourceSets.test.runtimeClasspath + files('config')
-  main = "src.test.java.client.ClientTest"
+    pmdMain {
+        excludes = ["**/ProtoMessages.java"]
+    }
 }

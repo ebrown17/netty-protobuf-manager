@@ -1,5 +1,6 @@
 package common.server;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import common.*;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
@@ -29,7 +30,7 @@ public abstract class Server<I> implements HandlerListener<I>, Reader<I> {
   private ConcurrentHashMap<Integer, Transceiver<I>> transceiverMap;
   private ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>> channelConnectionMap;
   private ConcurrentHashMap<InetSocketAddress, Integer> remoteHostToChannelMap;
-
+  private ArrayList<ReadListener<I>> readListeners;
 
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -44,6 +45,7 @@ public abstract class Server<I> implements HandlerListener<I>, Reader<I> {
     transceiverMap = new ConcurrentHashMap<Integer, Transceiver<I>>(INITIAL_CHANNEL_LIMIT);
     channelConnectionMap = new ConcurrentHashMap<Integer, ArrayList<InetSocketAddress>>(INITIAL_CHANNEL_LIMIT);
     remoteHostToChannelMap = new ConcurrentHashMap<InetSocketAddress, Integer>(INITIAL_CHANNEL_LIMIT);
+    readListeners= new ArrayList<ReadListener<I>>(INITIAL_CHANNEL_LIMIT);
 
     ThreadFactory threadFactory = new DefaultThreadFactory("server");
     // the bossGroup will handle all incoming connections and pass them off to the workerGroup
@@ -279,6 +281,16 @@ public abstract class Server<I> implements HandlerListener<I>, Reader<I> {
     else {
       logger.error("sendMessage No tranceiver found for {} connected to port channel {}", addr.getHostName(), addr.getPort());
     }
+  }
+
+  public void readMessage(InetSocketAddress addr, I message) {
+    logger.trace("readMessage got message: {}", message.toString());
+    for(ReadListener<I> listener: readListeners){
+      listener.read(addr,message);
+    }
+  }
+  public void registerReadListener(ReadListener<I> reader){
+    readListeners.add(reader);
   }
 
 }

@@ -43,11 +43,9 @@ public class Transceiver<I> {
   }
 
   public void handleMessage(InetSocketAddress addr, I message) {
-    logger.info("handleMessage from {} with {}", addr, message);
+    logger.trace("handleMessage from {} with {}", addr, message);
     Reader<I> reader = channelReaders.get(addr);
-    logger.info("handleMessage reader {} msg: {}",reader,message);
     if(reader != null){
-      logger.info("handleMessage reader {} msg: {}",reader,message);
       reader.readMessage(addr,message);
     }
   }

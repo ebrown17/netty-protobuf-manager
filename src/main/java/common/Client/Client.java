@@ -1,5 +1,6 @@
 package common.Client;
 
+import common.ReadListener;
 import common.Reader;
 import common.Transceiver;
 import io.netty.bootstrap.Bootstrap;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Client<I> implements Reader<I> {
@@ -34,6 +36,7 @@ public abstract class Client<I> implements Reader<I> {
 
   private ClientConnectionListener retryListener;
   private ClientClosedConnectionListener closedListener;
+  private ArrayList<ReadListener<I>> readListeners;
   private int retryCount = 0;
   private long initialRetryTime = 0;
   private boolean disconnectInitiated = true;
@@ -41,6 +44,7 @@ public abstract class Client<I> implements Reader<I> {
   public <T extends TransceiverClientChannel> Client(InetSocketAddress serverAddress, EventLoopGroup sharedWorkerGroup, Transceiver<I> transceiver, T clientChannel){
     this.serverAddress = serverAddress;
     this.transceiver = transceiver;
+    readListeners = new ArrayList<ReadListener<I>>();
     bootstrap = new Bootstrap();
     bootstrap.group(sharedWorkerGroup);
     bootstrap.channel(NioSocketChannel.class);
@@ -130,11 +134,22 @@ public abstract class Client<I> implements Reader<I> {
 
   public void sendMessage(I message) {
     if (!isActive()) {
-      logger.warn("sendData can't send data on null or closed channel");
+      logger.warn("sendMessage attempted to send data on null or closed channel");
       return;
     }
-    logger.debug("sendData {} to remote host", message.toString(), channel.remoteAddress());
+    logger.trace("sendMessage remote: {} message: {}", channel.remoteAddress(),message.toString());
     transceiver.sendMessage(serverAddress,message);
+  }
+
+  public void readMessage(InetSocketAddress addr, I message) {
+    logger.trace("readMessage got message: {}", message.toString());
+    for(ReadListener<I> listener: readListeners){
+      listener.read(addr,message);
+    }
+  }
+
+  public void registerReadListener(ReadListener<I> reader){
+    readListeners.add(reader);
   }
 
   public Channel getChannel() {
