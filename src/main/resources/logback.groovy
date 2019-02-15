@@ -14,18 +14,21 @@ scan('1 Minutes')
 def logFileDate = timestamp('yyyy-MM-dd_HHmmss')
 def defaultLogPattern = "%d{HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%msg%n"
 
+def name ="connection-manager"
+def mode = "test"
+context.name = name
+
 
 appender("ROLLING", RollingFileAppender) {
-  file = "test.log"
+  file = "debuglog/${name}.log"
 
   rollingPolicy(TimeBasedRollingPolicy) {
-    fileNamePattern = "test-%d.log.gz"
+    fileNamePattern = "debuglog/${name}-%d.log.gz"
     maxHistory = 14
     totalSizeCap = "5GB"
   }
 
   encoder(PatternLayoutEncoder) { pattern = defaultLogPattern }
-
 }
 
 appender("STDOUT", ConsoleAppender) {
@@ -44,5 +47,16 @@ appender("ASYNC",AsyncAppender){
 // Log level for logger in these classes, will override root level if set, will duplicate logs if same appender is added
 logger('io.netty',WARN)
 
+
 // Root log level for all logging
-root(DEBUG, ["STDOUT"])
+
+if(mode == 'production'){
+  println "Production logging level set"
+  println "Logging in mode: ${mode}"
+  root(INFO, ["ASYNC"])
+}
+else{
+  println "None Production logging level set"
+  println "Logging in mode: ${mode}"
+  root(DEBUG, ["ASYNC"])
+}

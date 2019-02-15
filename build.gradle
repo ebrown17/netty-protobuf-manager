@@ -3,6 +3,7 @@ plugins {
     id "java"
     id "groovy"
     id "idea"
+    id "eclipse"
     id "pmd"
     id "application"
 }
@@ -12,29 +13,27 @@ mainClassName = "Main"
 repositories { mavenCentral() }
 
 dependencies {
-  implementation 'com.google.protobuf:protobuf-java:3.3.1'
+    implementation 'com.google.protobuf:protobuf-java:3.3.1'
     implementation 'org.codehaus.groovy:groovy-all:2.4.12'
     implementation 'io.netty:netty-all:4.1.33.Final'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
     implementation 'org.slf4j:slf4j-api:1.7.25'
     implementation 'ch.qos.logback:logback-classic:1.2.3'
-  testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
-  
+    testCompile 'org.spockframework:spock-core:1.1-groovy-2.4'
+
 }
 
 spotbugs {
-	sourceSets = [sourceSets.main]
- 	ignoreFailures = true
-	effort = "max"
-	reportLevel = "low"
-	excludeFilter = file("src/main/resources/spotbugs-exclude.xml")
+    sourceSets = [sourceSets.main]
+    ignoreFailures = true
+    effort = "max"
+    reportLevel = "low"
+    excludeFilter = file("src/main/resources/spotbugs-exclude.xml")
     spotbugsMain {
         reports.xml.enabled = false
         reports.html.enabled = true
     }
-
 }
-
 
 pmd {
     ignoreFailures = true

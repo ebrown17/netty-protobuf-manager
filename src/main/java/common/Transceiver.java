@@ -67,7 +67,7 @@ public class Transceiver<I> {
    */
   public void sendMessage(InetSocketAddress addr,I message) {
     synchronized (activeLock) {
-      logger.trace("sendMessage to addr: {} with {}", addr, message);
+      logger.debug("sendMessage to addr: {} with {}", addr, message);
       Handler<I> handler = activeHandlers.get(addr);
       if (handler != null) {
         handler.sendMessage(message);
